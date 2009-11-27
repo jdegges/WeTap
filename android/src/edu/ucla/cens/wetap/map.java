@@ -43,6 +43,8 @@ import android.graphics.drawable.Drawable;
 
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import android.content.res.Resources;
 import android.content.Intent;
@@ -100,6 +102,26 @@ public class map extends MapActivity {
     @Override
     protected boolean isRouteDisplayed() {
         return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu (Menu m) {
+        super.onCreateOptionsMenu (m);
+
+        m.add (Menu.NONE, 0, Menu.NONE, "Survey").setIcon (android.R.drawable.ic_menu_agenda);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected (MenuItem i) {
+        switch (i.getItemId()) {
+            case 0:
+                map.this.startActivity (new Intent(map.this, survey.class));
+                map.this.finish();
+                return true;
+            default:
+                return false;
+        }
     }
 
     public class MySiteOverlay<Item> extends ItemizedOverlay {

@@ -81,12 +81,10 @@ public class authenticate extends Activity {
                 preferences.edit().putBoolean("authenticated", true).commit();
                 Log.d(TAG, "authentication successful");
 
-//                authenticate.this.startActivity(new Intent(authenticate.this, survey.class));
-//                Log.d(TAG, "started survey intent");
-//                startService(new Intent(authenticate.this, survey_upload.class));
-//                Log.d(TAG, "started survey upload intent");
-                authenticate.this.startActivity(new Intent(authenticate.this, map.class));
-                Log.d(TAG, "started map activity");
+                authenticate.this.startActivity(new Intent(authenticate.this, survey.class));
+                Log.d(TAG, "started survey intent");
+                startService(new Intent(authenticate.this, survey_upload.class));
+                Log.d(TAG, "started survey upload intent");
                 authenticate.this.finish();
                 return;
             }

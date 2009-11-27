@@ -17,6 +17,9 @@ import android.location.Criteria;
 
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -82,39 +85,40 @@ public class survey extends Activity
 
         // add taste boxes
         ArrayList<CheckBox> lcb = new ArrayList<CheckBox>();
-        lcb.add( (CheckBox) findViewById(R.id.taste_poor) );
+        lcb.add( (CheckBox) findViewById(R.id.taste_same) );
         lcb.add( (CheckBox) findViewById(R.id.taste_good) );
-        lcb.add( (CheckBox) findViewById(R.id.taste_excellent) );
+        lcb.add( (CheckBox) findViewById(R.id.taste_bad) );
+        lcb.add( (CheckBox) findViewById(R.id.taste_other) );
         group_box_list.add(lcb);
         Log.d(TAG, "added taste boxes");
 
         // add visibility boxes
         lcb = new ArrayList<CheckBox>();
-        lcb.add( (CheckBox) findViewById(R.id.visibility_hidden) );
         lcb.add( (CheckBox) findViewById(R.id.visibility_visible) );
+        lcb.add( (CheckBox) findViewById(R.id.visibility_hidden) );
         group_box_list.add(lcb);
         Log.d(TAG, "added visibility boxes");
 
         // add operable boxes
         lcb = new ArrayList<CheckBox>();
-        lcb.add( (CheckBox) findViewById(R.id.operable_broken) );
-        lcb.add( (CheckBox) findViewById(R.id.operable_needs_repair) );
         lcb.add( (CheckBox) findViewById(R.id.operable_functioning) );
+        lcb.add( (CheckBox) findViewById(R.id.operable_needs_repair) );
+        lcb.add( (CheckBox) findViewById(R.id.operable_broken) );
         group_box_list.add(lcb);
         Log.d(TAG, "added operable boxes");
 
         // add flow boxes
         lcb = new ArrayList<CheckBox>();
-        lcb.add( (CheckBox) findViewById(R.id.flow_trickle) );
         lcb.add( (CheckBox) findViewById(R.id.flow_strong) );
+        lcb.add( (CheckBox) findViewById(R.id.flow_trickle) );
         lcb.add( (CheckBox) findViewById(R.id.flow_too_strong) );
         group_box_list.add(lcb);
         Log.d(TAG, "added flow boxes");
 
         // add style boxes
         lcb = new ArrayList<CheckBox>();
-        lcb.add( (CheckBox) findViewById(R.id.style_drinking) );
         lcb.add( (CheckBox) findViewById(R.id.style_refilling) );
+        lcb.add( (CheckBox) findViewById(R.id.style_drinking) );
         lcb.add( (CheckBox) findViewById(R.id.style_both) );
         group_box_list.add(lcb);
         Log.d(TAG, "added style boxes");
@@ -177,6 +181,27 @@ public class survey extends Activity
 
         return;
     }
+
+    @Override
+    public boolean onCreateOptionsMenu (Menu m) {
+        super.onCreateOptionsMenu (m);
+
+        m.add (Menu.NONE, 0, Menu.NONE, "Map").setIcon (android.R.drawable.ic_menu_mapmode);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected (MenuItem i) {
+        switch (i.getItemId()) {
+            case 0:
+                survey.this.startActivity (new Intent(survey.this, map.class));
+                survey.this.finish();
+                return true;
+            default:
+                return false;
+        }
+    }
+
 
     private void alert_no_gps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -334,7 +359,6 @@ public class survey extends Activity
 
             Location loc;
             while (null == (loc = ll.get_location())) {
-                Log.d("SURVEY SUBMIT BUTTON:", "LOCATION IS NULL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 try { Thread.sleep(5000); }
                 catch (InterruptedException e) {};
             }
@@ -370,6 +394,8 @@ public class survey extends Activity
             // clean up location listener and close this view
             ll.my_delete();
             ll = null;
+
+            survey.this.startActivity (new Intent(survey.this, survey.class));
             survey.this.finish();
         }
     };

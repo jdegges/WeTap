@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:text="Taste:" />
-            <CheckBox android:id="@+id/taste_poor"
+            <CheckBox android:id="@+id/taste_same"
                 android:layout_below="@id/taste_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,22 +41,21 @@
                 android:checked="true"
                 android:text="Same as home tap"/>
             <CheckBox android:id="@+id/taste_good"
-                android:layout_alignTop="@id/taste_poor"
-                android:layout_toRightOf="@id/taste_poor"
+                android:layout_alignTop="@id/taste_same"
+                android:layout_toRightOf="@id/taste_same"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
                 android:text="Better"/>
-            <CheckBox android:id="@+id/taste_excellent"
-                android:layout_alignTop="@id/taste_good"
-                android:layout_toRightOf="@id/taste_good"
+            <CheckBox android:id="@+id/taste_bad"
+                android:layout_below="@id/taste_same"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
                 android:text="Worse"/>
             <CheckBox android:id="@+id/taste_other"
-                android:layout_alignTop="@id/taste_excellent"
-                android:layout_toRightOf="@id/taste_excellent"
+                android:layout_alignTop="@id/taste_bad"
+                android:layout_toRightOf="@id/taste_bad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
@@ -83,6 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
+                android:checked="true"
                 android:text="Visible"/>
             <CheckBox android:id="@+id/visibility_hidden"
                 android:layout_alignTop="@id/visibility_visible"
@@ -90,7 +90,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
-                android:checked="true"
                 android:text="Hidden"/>
         </RelativeLayout>
     </TableRow>
@@ -114,6 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
+                android:checked="true"
                 android:text="Working"/>
             <CheckBox android:id="@+id/operable_broken"
                 android:layout_alignTop="@id/operable_functioning"
@@ -121,11 +121,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
-                android:checked="true"
                 android:text="Broken"/>
             <CheckBox android:id="@+id/operable_needs_repair"
-                android:layout_alignTop="@id/operable_broken"
-                android:layout_toRightOf="@id/operable_broken"
+                android:layout_below="@id/operable_functioning"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
@@ -152,6 +150,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
+                android:checked="true"
                 android:text="Strong"/>
             <CheckBox android:id="@+id/flow_trickle"
                 android:layout_alignTop="@id/flow_strong"
@@ -159,7 +158,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
-                android:checked="true"
                 android:text="Trickle"/>
             <CheckBox android:id="@+id/flow_too_strong"
                 android:layout_alignTop="@id/flow_trickle"
@@ -189,6 +187,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
+                android:checked="true"
                 android:text="Refilling"/>
             <CheckBox android:id="@+id/style_drinking"
                 android:layout_alignTop="@id/style_refilling"
@@ -196,7 +195,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
-                android:checked="true"
                 android:text="Drinking"/>
             <CheckBox android:id="@+id/style_both"
                 android:layout_alignTop="@id/style_drinking"
