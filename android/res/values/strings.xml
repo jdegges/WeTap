@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeTap</string>
+    <string name="version">1</string>
+
+    <string name="preferences">edu.ucla.cens.wetap.preferences</string>
+    <string name="prefs">edu.ucla.cens.wetap.preferences</string>
+    <string name="surveyuploadstarted">Photos are being uploaded.</string>
+    <string name="surveyuploadstopped">Photos are not being uploaded.</string>
+
+    <string name="baseurl">http://we-tap.appspot.com</string>
+    <string name="loginurl">http://we-tap.appspot.com/_ah/login</string>
+    <string name="surveyuploadurl">"http://we-tap.appspot.com/upload_survey"</string>
+</resources>

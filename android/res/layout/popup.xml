@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <RelativeLayout android:id="@+id/relative_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <WebView android:id="@+id/image"
+            android:layout_width="195sp"
+            android:layout_height="150sp">
+        </WebView>
+
+        <TextView android:id="@+id/taste_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="Taste:" />
+        <TextView android:id="@+id/taste_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image"
+            android:layout_toRightOf="@id/taste_label"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="" />
+
+        <TextView android:id="@+id/visibility_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/taste_label"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="Visibility:" />
+        <TextView android:id="@+id/visibility_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/taste_score"
+            android:layout_toRightOf="@id/visibility_label"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="" />
+
+        <TextView android:id="@+id/operable_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/visibility_label"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="Operable:" />
+        <TextView android:id="@+id/operable_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/visibility_score"
+            android:layout_toRightOf="@id/operable_label"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="" />
+
+        <TextView android:id="@+id/flow_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/operable_label"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="Flow:" />
+        <TextView android:id="@+id/flow_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/operable_score"
+            android:layout_toRightOf="@id/flow_label"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="" />
+
+        <TextView android:id="@+id/style_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/flow_label"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="Style:" />
+        <TextView android:id="@+id/style_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/flow_score"
+            android:layout_toRightOf="@id/style_label"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="" />
+
+    </RelativeLayout>
+</ScrollView>

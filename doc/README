@@ -1,0 +1,6 @@
+This repository tracks the source code to the WeTap water quality survey
+application. Currently, the only available client implementation runs on the
+android and the only server implementation runs on appengine.
+
+See the appropriate android and appengine documentation for instructions on how
+to build and deploy the code on each platform.

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- Change Colors -->
+<drawable name="background">#0d466a</drawable>
+<drawable name="textcolor">#34fdff</drawable>
+
+<!-- Example Colors -->
+<drawable name="darkgray">#404040ff</drawable>
+<drawable name="black">#000000</drawable>
+<drawable name="green">#315908</drawable>
+<drawable name="lightgray">#c0c0c0ff</drawable>
+<drawable name="white">#ffffffff</drawable>
+<drawable name="blue">#00ffff</drawable>
+<drawable name="gray">#808080ff</drawable>
+<drawable name="pale">#BE954B</drawable>
+</resources>
