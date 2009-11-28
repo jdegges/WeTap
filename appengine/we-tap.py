@@ -47,7 +47,13 @@ class UploadSurvey(webapp.RequestHandler):
         s.latitude = self.request.get('latitude')
         s.time = self.request.get('time')
         s.version = self.request.get('version')
-        s.photo = db.Blob(self.request.get('file'))
+
+        file_content = self.request.get('file')
+        try:
+            s.photo = db.Blob(file_content)
+        except TypeError:
+            s.photo = ''
+
         s.put()
         self.redirect('/')
 
