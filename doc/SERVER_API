@@ -1,0 +1,101 @@
+This document details how clients can interact with the current version of the
+server (running on appengine). The functionality described here is subject to
+change without notice.
+
+- Uploading a survey:
+    # Base URL: http://we-tap.appspot.com/upload_survey
+    # No required parameters (however, of course nothing will be stored).
+    # Optional parameters:
+        The following 5 parameters should be the encoded answer to the
+        corresponding survey question: {Answer = <code>, ... }
+        + q_taste       : {Same as home tap=0, Better=1, Worse=2, Cant answer=3}
+            How does this water taste compared with your home tap?
+
+        + q_visibility  : {Visible=0, Hidden=1}
+            Is the location of this water source out in the open?
+
+        + q_operable    : {Working=0,Broken=1,Needs repair=2}
+            What is the condition of this water source?
+
+        + q_flow        : {Strong=0, Trickle=1, Too strong=2}
+            How you would describe the water flow?
+
+        + q_style       : {Refilling bottles=0, Drinking=1, Both=2}
+            What how can this water source be used to get water?
+
+        + longitude     : The longitude value (double)
+        + latitude      : The latitude value (double)
+        + time          : The time this survey was taken
+        + version       : A version number that may be useful to clients in
+                          their different implementations.
+        + file          : An image of the water souce.
+    # Usage:
+        All of the parameters should be posted to the base URL. The file should
+        be sent as a proper file (do not just dump the file contents into a
+        string).
+    # Return value:
+        200 If everything went ok, otherwise some other code indicating error.
+
+- Downloading a summary of previously uploaded sites:
+    # Base URL: http://we-tap.appspot.com/get_point_summary
+    # No required paramters
+    # No optional parameters
+    # Return values will be provided in JSON format:
+        GET http://we-tap.appspot.com/get_point_summary
+        {"0": {"latitude": "100.00000000000000",
+               "key": "aZw3ZS10YXBykQsSclN1caZleRjUDww",
+               "version": "1",
+               "q_taste": "0",
+               "longitude": "-100.0000000000000"},
+         "1": {"latitude": "150.000000000000000",
+               "key": "2ga3ZS10YXByDasSBcN1cjZleRjTDww",
+               "version": "1",
+               "q_taste": "0",
+               "longitude": "-150.0000000000000"},
+         ... ,
+         "9": {...}}
+
+- Downloading full description of one point:
+    # Base URL: http://we-tap.appspot.com/get_a_point
+    # Required parameters:
+        + key : <key value>
+            The key value that was returned by /get_point_summary
+    # No optional parameters
+    # Return values will be provided in JSON format:
+        GET http://we-tap.appspot.com/get_a_point?
+            key=aZw3ZS10YXBykQsSclN1caZleRjUDww
+        {"q_flow": "0",
+         "photo": "http:\/\/we-tap.appspot.com\/get_image_thumb?key=agZ3ZS10YXByDQsSBlN1cnZleRjUDww",
+         "q_operable": "0",
+         "version": "1",
+         "q_style": "0",
+         "q_visibility": "0",
+         "q_taste": "0"}
+
+        + The photo value contains a URL that points to a thumbnail of the
+        original uploaded image. The thumbnail will have dimensions 180x130.
+
+- Downloading original images:
+    # Base URL: http://we-tap.appspot.com/get_an_image
+    # Required parameters:
+        + key : <key value>
+            The key value that was returned by /get_points_summary
+    # No optional parameters
+    # Return image will be provided as a raw image:
+        GET http://we-tap.appspot.com/get_an_image?
+            key=aZw3ZS10YXBykQsSclN1caZleRjUDww
+        <This will return the actual image (Conten-type: image/jpeg ...)>
+
+- Downloading image thumbnail:
+    # Base URL: http://we-tap.appspot.com/get_image_thumb
+    # Required parameters:
+        + key : <key value>
+            The key value that was returned by /get_points_summary
+    # No optional parameters
+    # Return values can be either a resized raw image or an html page displaying
+    a resized image (these requirements may change soon):
+        GET http://we-tap.appspot.com/get_image_thumb?
+            key=aZw3ZS10YXBykQsSclN1caZleRjUDww
+        
+        Option 1: <the raw image data>
+        Option 2: "<img src=\"...\" width=\"180\" height=\"130\">"
