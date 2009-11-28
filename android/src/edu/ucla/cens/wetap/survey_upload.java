@@ -85,7 +85,7 @@ public class survey_upload extends Service{
 
 					//list all trace files
 			        sdb.open();
-					ArrayList<survey_db_row> sr_list = sdb.fetchAllEntries();
+					ArrayList<survey_db_row> sr_list = sdb.fetch_all_completed_entries();
 					sdb.close();
 					
 	                Log.d(TAG, "Points to submit: " + Integer.toString(sr_list.size()));
@@ -96,9 +96,13 @@ public class survey_upload extends Service{
 					{
 						survey_db_row sr = sr_list.get(i);
 						File file = null;
-						if ((sr.photo_filename != null) && (sr.photo_filename.toString() != ""))
+						if ((sr.photo_filename != null) && (!sr.photo_filename.toString().equals(""))) {
+                            Log.d(TAG, "FILENAME: is not null/empty");
 							file = new File(sr.photo_filename.toString());
-
+                        } else {
+                            Log.d(TAG, "FILENAME: IS NULL");
+                        }
+                        Log.d(TAG, "FILENAME: " + sr.photo_filename);
 						try
 						{
 							if(doPost(getString(R.string.surveyuploadurl),
@@ -119,7 +123,7 @@ public class survey_upload extends Service{
 						{
 							// TODO Auto-generated catch block
 							Log.d(TAG, "threw an IOException for sending file.");
-							e.printStackTrace();	
+							e.printStackTrace();
 						}
 						this.sleep(1000);
 					}
@@ -170,8 +174,14 @@ public class survey_upload extends Service{
 	    	
 	    	Log.d(TAG, "After adding string");
 
-	    	File file = new File(photo_filename.toString());
-	    	entity.addPart("file", new FileBody(file));
+            if (photo_filename == null || photo_filename.equals("")) {
+                Log.d(TAG, "ADDING empty string as file contents");
+                entity.addPart("file", new StringBody(""));
+            } else {
+                Log.d(TAG, "ADDING the actual file body of: >>" + photo_filename + "<<");
+    	    	File file = new File(photo_filename.toString());
+	        	entity.addPart("file", new FileBody(file));
+            }
 	    	
 	    	Log.d(TAG, "After adding file");
 	    	

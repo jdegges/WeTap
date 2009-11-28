@@ -70,15 +70,12 @@ public class survey extends Activity
         }
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
         if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        Log.d(TAG, "no gps was enabled, so enabling the gps now");
             alert_no_gps();
         }
 
-        Log.d(TAG, "gps is started");
-
-
-        ll = new light_loc(lm);
+        ll = new light_loc (this, lm);
         sdb = new survey_db(this);
 
         Log.d(TAG, "gps listener and db are started");
@@ -231,7 +228,7 @@ public class survey extends Activity
     protected void onResume() {
         super.onResume();
         if (null == ll) {
-            ll = new light_loc((LocationManager) getSystemService(Context.LOCATION_SERVICE));
+            ll = new light_loc(this, (LocationManager) getSystemService(Context.LOCATION_SERVICE));
         }
     }
 
@@ -245,7 +242,7 @@ public class survey extends Activity
     protected void onStart() {
         super.onStart();
         if (null == ll) {
-            ll = new light_loc((LocationManager) getSystemService(Context.LOCATION_SERVICE));
+            ll = new light_loc(this, (LocationManager) getSystemService(Context.LOCATION_SERVICE));
         }
     }
 
@@ -357,17 +354,10 @@ public class survey extends Activity
                 }
             }
 
-            Location loc;
-            while (null == (loc = ll.get_location())) {
-                try { Thread.sleep(5000); }
-                catch (InterruptedException e) {};
-            }
-
-            String longitude = Double.toString(loc.getLongitude());
-            String latitude = Double.toString(loc.getLatitude());
+            String longitude = "";
+            String latitude = "";
             String time = Long.toString(d.getTime());
             String photo_filename = filename;
-
 
             sdb.open();
             long row_id = sdb.createEntry(q_taste, q_visibility, q_operable,
@@ -391,10 +381,7 @@ public class survey extends Activity
                                    sr.version + ", " +
                                    sr.photo_filename + ".");
 
-            // clean up location listener and close this view
-            ll.my_delete();
-            ll = null;
-
+            // restart this view
             survey.this.startActivity (new Intent(survey.this, survey.class));
             survey.this.finish();
         }

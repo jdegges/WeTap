@@ -196,6 +196,52 @@ public class survey_db {
 		return ret;
 	}
 
+    public ArrayList <survey_db_row>  fetch_all_completed_entries()
+    {
+        ArrayList<survey_db_row> ret = new ArrayList<survey_db_row>();
+
+        try
+        {
+            String[] columns = new String[] {KEY_ROWID,
+                KEY_Q_TASTE, KEY_Q_VISIBILITY, KEY_Q_OPERABLE, KEY_Q_FLOW,
+                KEY_Q_STYLE, KEY_LONGITUDE, KEY_LATITUDE, KEY_TIME,
+                KEY_VERSION, KEY_PHOTO_FILENAME};
+            String selection = KEY_LONGITUDE + "<>\"\"" + " AND " +
+                               KEY_LATITUDE + "<>\"\"";
+
+            Cursor c = db.query(DATABASE_TABLE, columns, selection, null, null,
+                                null, null);
+            int numRows = c.getCount();
+
+            c.moveToFirst();
+
+            for (int i =0; i < numRows; ++i)
+            {
+                survey_db_row sr = new survey_db_row();
+
+                sr.row_id = c.getLong(0);
+                sr.q_taste = c.getString(1);
+                sr.q_visibility = c.getString(2);
+                sr.q_operable = c.getString(3);
+                sr.q_flow = c.getString(4);
+                sr.q_style = c.getString(5);
+                sr.longitude = c.getString(6);
+                sr.latitude = c.getString(7);
+                sr.time = c.getString(8);
+                sr.version = c.getString(9);
+                sr.photo_filename = c.getString(10);
+                ret.add(sr);
+
+                c.moveToNext();
+            }
+            c.close();
+        }
+        catch (Exception e){
+            Log.e(TAG, e.getMessage());
+        }
+        return ret;
+    }
+
 	public survey_db_row fetchEntry(long rowId) throws SQLException
 	{
         Cursor c = db.query(DATABASE_TABLE, new String[] {KEY_ROWID,
@@ -229,4 +275,15 @@ public class survey_db {
 		c.close();
 		return sr;
 	}
+
+    public int update_gpsless_entries (String lon, String lat) {
+        ContentValues values = new ContentValues();
+        values.put (KEY_LONGITUDE, lon);
+        values.put (KEY_LATITUDE, lat);
+
+        String where_clause = KEY_LONGITUDE + "=\"\"" + " AND " + KEY_LATITUDE + "=\"\"";
+
+        int ret = db.update (DATABASE_TABLE, values, where_clause, null);
+        return ret;
+    }
 }

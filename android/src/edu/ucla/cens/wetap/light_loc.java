@@ -8,38 +8,37 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.util.Log;
 
+import edu.ucla.cens.wetap.survey_db;
+import edu.ucla.cens.wetap.survey_db.survey_db_row;
+
 public class light_loc {
     private LocationManager lm;
     private LocationListener ll;
-    private Location last_loc = null;
+    private survey_db sdb;
 
-    light_loc(LocationManager locm) {
+    light_loc(Context ctx, LocationManager locm) {
         lm = locm;
         ll = new location_listener();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, ll);
-        last_loc = null;
+        sdb = new survey_db (ctx);
     }
 
     public void my_delete() {
-        Log.d("REMOVING UPDATES", "@@@@@@@@@@@@@@@@@@@@@@@2@@@@@@@@@@@@@@@@@@@@@@@2@@@@@@@@@@@@@@@@@@@@@@@2@@@@@@@@@@@@@@@@@@@@@@@2@@@@@@@@@@@@@@@@@@@@@@@2@@@@@@@@@@@@@@@@@@@@@@@2");
         lm.removeUpdates(ll);
         ll = null;
         lm = null;
     }
 
-    public Location get_location () {
-        while (null == last_loc) {
-            try{ Thread.sleep(500); }
-            catch (InterruptedException e) {}
-        }
-        return last_loc;
-    }
-
     private class location_listener implements LocationListener {
         public void onLocationChanged(Location loc) {
             if (null != loc) {
-                last_loc = loc;
                 Log.d("ON LOCATION CHANGED", "THE LOCATION HAS JUST CHANGED TO: " + loc.toString());
+                String lat = Double.toString(loc.getLatitude());
+                String lon = Double.toString(loc.getLongitude());
+
+                sdb.open();
+                sdb.update_gpsless_entries (lon, lat);
+                sdb.close();
             }
         }
 
