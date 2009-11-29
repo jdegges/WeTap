@@ -48,7 +48,7 @@ public class survey extends Activity
     private ArrayList<ArrayList<CheckBox>> group_box_list = new ArrayList<ArrayList<CheckBox>>();
     private Button take_picture;
     private Button submit_button;
-    private Button clear_history;
+    //private Button clear_history;
     private ImageView image_thumbnail;
     private String filename = "";
     private light_loc ll;
@@ -127,7 +127,7 @@ public class survey extends Activity
         take_picture = (Button) findViewById(R.id.picture_button);
 
         // add clear history button
-        clear_history = (Button) findViewById(R.id.clear_history_button);
+        //clear_history = (Button) findViewById(R.id.clear_history_button);
         Log.d(TAG, "added buttons");
 
         // add image thumbnail view
@@ -149,7 +149,7 @@ public class survey extends Activity
         take_picture.setOnClickListener(take_picture_listener);
 
         // add clear history button listener
-        clear_history.setOnClickListener(clear_history_listener);
+        //clear_history.setOnClickListener(clear_history_listener);
 
         // restore previous state (if available)
         if (savedInstanceState != null && savedInstanceState.getBoolean("started")) {
@@ -382,6 +382,7 @@ public class survey extends Activity
                                    sr.photo_filename + ".");
 
             // restart this view
+            Toast.makeText(survey.this, "Survey successfully submitted!", Toast.LENGTH_LONG).show();
             survey.this.startActivity (new Intent(survey.this, survey.class));
             survey.this.finish();
         }

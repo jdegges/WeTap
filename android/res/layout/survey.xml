@@ -239,13 +239,15 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
                 android:text="Upload" />
-            <Button android:id="@+id/clear_history_button"
+<!--
+                <Button android:id="@+id/clear_history_button"
                 android:layout_alignTop="@id/upload_button"
                 android:layout_toRightOf="@id/upload_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
                 android:text="Clear History"/>
+-->
 
         </RelativeLayout>
     </TableRow>
