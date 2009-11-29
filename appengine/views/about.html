@@ -1,0 +1,18 @@
+{% extends "template.html" %}    
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+    <div style="width:980px; height:100%;">
+        <div style="width:480px; height:200px; font-size:20px; position:absolute; left:50px; top:200px;" align="left">
+            <p>This service was developed at the <a href="http://research.cens.ucla.edu">Center for Embedded Networked Sensing</a> at UCLA</p>
+            <p>All of the code for this service is open source and available for download. Any contributions to this project are welcomed.</p>
+            <p>You can get a copy of the source code from our git repository over at <a href="http://www.github.com/jdegges/wetap">www.github.com/jdegges/wetap</a></p>
+        </div>
+
+        <div style="position:absolute; left:680px; top:200px; text-align:center;" align="center">
+            <a href="http://research.cens.ucla.edu"><img src="/images/cens.png"></a><br/><br/><br/>
+            <img src="http://code.google.com/appengine/images/appengine-silver-120x30.gif" alt="Powered by Google App Engine" />
+        </div>
+    </div>
+{% endblock %}

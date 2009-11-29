@@ -71,13 +71,28 @@ class Survey(db.Model):
     version =       db.StringProperty()
     photo =         db.BlobProperty()
 
-class MainPage(webapp.RequestHandler):
+class HomePage(webapp.RequestHandler):
+    def get(self):
+        path = os.path.join (os.path.dirname(__file__), 'views/home.html')
+        self.response.out.write (template.render(path, {}))
+
+class MapPage(webapp.RequestHandler):
     def get(self):
         surveys = Survey.all().fetch(10)
         decoded = decode_surveys (surveys)
         template_values = { 'surveys' : decoded }
         path = os.path.join (os.path.dirname(__file__), 'views/map.html')
         self.response.out.write (template.render(path, template_values))
+
+class ClientsPage(webapp.RequestHandler):
+    def get(self):
+        path = os.path.join (os.path.dirname(__file__), 'views/clients.html')
+        self.response.out.write (template.render(path, {}))
+
+class AboutPage(webapp.RequestHandler):
+    def get(self):
+        path = os.path.join (os.path.dirname(__file__), 'views/about.html')
+        self.response.out.write (template.render(path, {}))
 
 class UploadSurvey(webapp.RequestHandler):
     def post(self):
@@ -175,7 +190,10 @@ class GetImageThumb(webapp.RequestHandler):
         self.response.out.write("\" width=\"180\" height=\"130\"></body></html>")
 
 application = webapp.WSGIApplication(
-                                     [('/', MainPage),
+                                     [('/', HomePage),
+                                      ('/map', MapPage),
+                                      ('/clients', ClientsPage),
+                                      ('/about', AboutPage),
                                       ('/upload_survey', UploadSurvey),
                                       ('/get_point_summary', GetPointSummary),
                                       ('/get_a_point', GetAPoint),
