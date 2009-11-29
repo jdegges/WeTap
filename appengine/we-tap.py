@@ -6,6 +6,56 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
+from google.appengine.ext.webapp import template
+
+def decode_surveys(surveys):
+    decoded = []
+    for s in surveys:
+        item = {}
+        item['q_taste'] = decode_survey("taste", s.q_taste)
+        item['q_visibility'] = decode_survey("visibility", s.q_visibility)
+        item['q_operable'] = decode_survey("operable", s.q_operable)
+        item['q_flow'] = decode_survey("flow", s.q_flow)
+        item['q_style'] = decode_survey("style", s.q_style)
+        item['longitude'] = s.longitude
+        item['latitude'] = s.latitude
+        item['key'] = str(s.key())
+        decoded.append(item)
+    return decoded
+
+def decode_survey(q, v):
+    return {
+        'taste':
+            lambda v: {
+                '0': lambda: "Same as home tap",
+                '1': lambda: "Better",
+                '2': lambda: "Worse",
+                '3': lambda: "Can't answer"
+            }[v](),
+        'visibility':
+            lambda v: {
+                '0': lambda: "Visible",
+                '1': lambda: "Hidden"
+            }[v](),
+        'operable':
+            lambda v: {
+                '0': lambda: "Working",
+                '1': lambda: "Broken",
+                '2': lambda: "Needs repair"
+            }[v](),
+        'flow':
+            lambda v: {
+                '0': lambda: "Strong",
+                '1': lambda: "Trickle",
+                '2': lambda: "Too strong"
+            }[v](),
+        'style':
+            lambda v: {
+                '0': lambda: "Refilling",
+                '1': lambda: "Drinking",
+                '2': lambda: "Both"
+            }[v]()
+    }[q](v)
 
 class Survey(db.Model):
     user = db.UserProperty()
@@ -23,13 +73,11 @@ class Survey(db.Model):
 
 class MainPage(webapp.RequestHandler):
     def get(self):
-        surveys = db.GqlQuery("SELECT * FROM Survey ORDER BY timestamp DESC LIMIT 10")
-        for s in surveys:
-            self.response.headers['Content-Type'] = 'image/jpeg'
-            self.response.out.write(s.photo)
-            return
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.out.write('No data has been uploaded :[')
+        surveys = Survey.all().fetch(10)
+        decoded = decode_surveys (surveys)
+        template_values = { 'surveys' : decoded }
+        path = os.path.join (os.path.dirname(__file__), 'views/map.html')
+        self.response.out.write (template.render(path, template_values))
 
 class UploadSurvey(webapp.RequestHandler):
     def post(self):

@@ -1,0 +1,46 @@
+{% extends "template.html" %}    
+
+{% block title %}Google Map{% endblock %}
+
+{% block includes %}
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAxbmfF4s8V6aW7q4K7J8svRRMK0JKVrksL0mowNee39efPEHpdBSjKv97X6g_rIkM81_0WqCZTFCwqA"
+            type="text/javascript"></script> 
+{% endblock %}
+
+{% block javascript %}
+    function initialize() {
+        if (GBrowserIsCompatible()) {
+            var mapOptions = {
+                googleBarOptions : {
+                    style : "new"
+                }
+            }
+
+            var map = new GMap2(document.getElementById("map_canvas"), mapOptions);
+            map.setCenter(new GLatLng(34.069209, -118.443161), 14);
+            map.setUIToDefault();
+            map.enableGoogleBar();
+ 
+            // Add markers to the map
+            {% for s in surveys %}
+                var marker = new GMarker(new GLatLng({{s.latitude}}, {{s.longitude}}));
+                GEvent.addListener(marker, "click", function() {
+                    var html = "<img src=\"http://we-tap.appspot.com/get_an_image?key={{s.key}}\" width=\"180\" height=\"130\">" +
+                               "<br />" +
+                               "<p><b>Taste: </b>{{s.q_taste}}<br/>" +
+                               "<b>Visibility: </b>{{s.q_visibility}}<br/>" +
+                               "<b>Operable: </b>{{s.q_operable}}<br/>" +
+                               "<b>Flow: </b>{{s.q_flow}}<br/>" +
+                               "<b>Style: </b>{{s.q_style}}" +
+                               "</p>";
+                    map.openInfoWindowHtml(new GLatLng({{s.latitude}}, {{s.longitude}}), html);
+                });
+                map.addOverlay(marker);
+            {% endfor %}
+        }
+    }
+{% endblock %}
+ 
+{% block content %}
+    <div id="map_canvas" style="width: 700px; height: 600px"></div>
+{% endblock %}
