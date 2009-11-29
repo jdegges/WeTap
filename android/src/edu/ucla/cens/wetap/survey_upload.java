@@ -80,7 +80,7 @@ public class survey_upload extends Service{
 			try {
 				while(runThread)
 				{
-					this.sleep(5000);
+					this.sleep(10000);
 					Log.d(TAG, "Running the thread");
 
 					//list all trace files
@@ -194,7 +194,7 @@ public class survey_upload extends Service{
 	    	Log.d(TAG, "Doing HTTP Reqest");
 
 	    	int status = response.getStatusLine().getStatusCode();
-	    	Log.d(TAG, generateString(response.getEntity().getContent()));
+	    	//Log.d(TAG, generateString(response.getEntity().getContent()));
 	    	Log.d(TAG, "Status Message: "+Integer.toString(status));
 	    	
 	    	if(status == HttpStatus.SC_OK)
