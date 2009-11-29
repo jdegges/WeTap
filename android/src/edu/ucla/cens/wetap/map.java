@@ -99,6 +99,34 @@ public class map extends MapActivity {
         overlay_list.add (site_overlay);
     }
 
+    protected void onPause() {
+        if (null != location_overlay) {
+            location_overlay.disableMyLocation();
+        }
+        super.onPause();
+    }
+
+    protected void onResume() {
+        super.onResume();
+        if (null != location_overlay) {
+            location_overlay.enableMyLocation();
+        }
+    }
+
+    protected void onStop() {
+        if (null != location_overlay) {
+            location_overlay.disableMyLocation();
+        }
+        super.onStop();
+    }
+
+    protected void onStart() {
+        super.onStart();
+        if (null != location_overlay) {
+            location_overlay.enableMyLocation();
+        }
+    }
+
     @Override
     protected boolean isRouteDisplayed() {
         return false;
