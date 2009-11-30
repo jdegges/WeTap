@@ -41,6 +41,7 @@ public class survey_upload extends Service{
     public void onCreate() {
         preferences = getSharedPreferences(getString(R.string.preferences), Activity.MODE_PRIVATE);
         if (!preferences.getBoolean("authenticated", false)) {
+            Log.d(TAG, "user is not authenticated... stopping this service");
             return;
         }
 

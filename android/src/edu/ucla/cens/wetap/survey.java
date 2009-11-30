@@ -63,11 +63,14 @@ public class survey extends Activity
         setContentView(R.layout.survey);
 
         preferences = getSharedPreferences(getString(R.string.preferences), Activity.MODE_PRIVATE);
-        if (!preferences.getBoolean("authenticated", false)) {
-            Log.d(TAG, "exiting (not authenticated)");
-            survey.this.finish();
-            return;
-        }
+        // allow users to collect data even if they are not yet authenticated
+        // let the survey_upload service make sure they are auth'd before
+        // uploading... (lets users collect data without internet conn)
+        //if (!preferences.getBoolean("authenticated", false)) {
+        //    Log.d(TAG, "exiting (not authenticated)");
+        //    survey.this.finish();
+        //    return;
+        //}
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
