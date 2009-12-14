@@ -109,8 +109,8 @@ public class survey_upload extends Service{
 							if(doPost(getString(R.string.surveyuploadurl),
                                       sr.q_taste, sr.q_visibility,
                                       sr.q_operable, sr.q_flow, sr.q_style,
-                                      sr.longitude, sr.latitude, sr.time,
-                                      sr.version, sr.photo_filename))
+                                      sr.q_location, sr.longitude, sr.latitude,
+                                      sr.time, sr.version, sr.photo_filename))
 							{
 								if(file != null) {
 									file.delete();
@@ -149,8 +149,8 @@ public class survey_upload extends Service{
 		 */
 	    private boolean doPost(String url, String q_taste, String q_visibility,
                                String q_operable, String q_flow, String q_style,
-                               String longitude, String latitude, String time,
-                               String version,
+                               String q_location, String longitude,
+                               String latitude, String time, String version,
                                String photo_filename) throws IOException
 	    {
 	    	Log.d(TAG, "Attempting to send file:" + photo_filename);
@@ -167,6 +167,7 @@ public class survey_upload extends Service{
             entity.addPart("q_operable", new StringBody(q_operable.toString()));
             entity.addPart("q_flow", new StringBody(q_flow.toString()));
             entity.addPart("q_style", new StringBody(q_style.toString()));
+            entity.addPart("q_location", new StringBody(q_location.toString()));
             entity.addPart("longitude", new StringBody(longitude.toString()));
             entity.addPart("latitude", new StringBody(latitude.toString()));
             entity.addPart("time", new StringBody(time.toString()));

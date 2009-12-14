@@ -68,6 +68,44 @@
         android:background="#FF909090" />
 
     <TableRow>
+
+        <RelativeLayout android:id="@+id/flow_row"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView android:id="@+id/flow_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="Flow:" />
+            <CheckBox android:id="@+id/flow_strong"
+                android:layout_below="@id/flow_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10sp"
+                android:checked="true"
+                android:text="Strong"/>
+            <CheckBox android:id="@+id/flow_trickle"
+                android:layout_alignTop="@id/flow_strong"
+                android:layout_toRightOf="@id/flow_strong"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10sp"
+                android:text="Trickle"/>
+            <CheckBox android:id="@+id/flow_too_strong"
+                android:layout_alignTop="@id/flow_trickle"
+                android:layout_toRightOf="@id/flow_trickle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Too Strong"/>
+        </RelativeLayout>
+    </TableRow>
+
+    <View
+        android:layout_height="2sp"
+        android:background="#FF909090" />
+
+    <TableRow>
         <RelativeLayout android:id="@+id/visibility_row"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
@@ -91,6 +129,37 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
                 android:text="Hidden"/>
+        </RelativeLayout>
+    </TableRow>
+
+    <View
+        android:layout_height="2sp"
+        android:background="#FF909090" />
+    
+    <TableRow>
+        <RelativeLayout android:id="@+id/location_row"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView android:id="@+id/location_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="Location:" />
+            <CheckBox android:id="@+id/location_indoor"
+                android:layout_below="@id/location_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10sp"
+                android:checked="true"
+                android:text="Indoor"/>
+            <CheckBox android:id="@+id/location_outdoors"
+                android:layout_alignTop="@id/location_indoor"
+                android:layout_toRightOf="@id/location_indoor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10sp"
+                android:text="Outdoors"/>
         </RelativeLayout>
     </TableRow>
 
@@ -128,43 +197,6 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="10sp"
                 android:text="Needs Repair"/>
-        </RelativeLayout>
-    </TableRow>
-
-    <View
-        android:layout_height="2sp"
-        android:background="#FF909090" />
-
-    <TableRow>
-        <RelativeLayout android:id="@+id/flow_row"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-
-            <TextView android:id="@+id/flow_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="Flow:" />
-            <CheckBox android:id="@+id/flow_strong"
-                android:layout_below="@id/flow_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="10sp"
-                android:checked="true"
-                android:text="Strong"/>
-            <CheckBox android:id="@+id/flow_trickle"
-                android:layout_alignTop="@id/flow_strong"
-                android:layout_toRightOf="@id/flow_strong"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="10sp"
-                android:text="Trickle"/>
-            <CheckBox android:id="@+id/flow_too_strong"
-                android:layout_alignTop="@id/flow_trickle"
-                android:layout_toRightOf="@id/flow_trickle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Too Strong"/>
         </RelativeLayout>
     </TableRow>
 

@@ -123,6 +123,13 @@ public class survey extends Activity
         group_box_list.add(lcb);
         Log.d(TAG, "added style boxes");
 
+        // add location boxes
+        lcb = new ArrayList<CheckBox>();
+        lcb.add( (CheckBox) findViewById(R.id.location_indoor) );
+        lcb.add( (CheckBox) findViewById(R.id.location_outdoors) );
+        group_box_list.add(lcb);
+        Log.d(TAG, "added location boxes");
+
         // add submit button
         submit_button = (Button) findViewById(R.id.upload_button);
 
@@ -311,6 +318,7 @@ public class survey extends Activity
             String q_operable = "0";
             String q_flow = "0";
             String q_style = "0";
+            String q_location = "0";
 
             List<CheckBox> lcb = group_box_list.get(0);
             for (int i = 0; i < lcb.size(); i++) {
@@ -357,6 +365,15 @@ public class survey extends Activity
                 }
             }
 
+            lcb = group_box_list.get(5);
+            for (int i = 0; i < lcb.size(); i++) {
+                CheckBox cb = (CheckBox) lcb.get(i);
+                if (cb.isChecked()) {
+                    q_location = Integer.toString(i);
+                    break;
+                }
+            }
+
             String longitude = "";
             String latitude = "";
             String time = Long.toString(d.getTime());
@@ -364,7 +381,7 @@ public class survey extends Activity
 
             sdb.open();
             long row_id = sdb.createEntry(q_taste, q_visibility, q_operable,
-                                          q_flow, q_style, longitude, latitude,
+                                          q_flow, q_style, q_location, longitude, latitude,
                                           time, getString(R.string.version), photo_filename);
             sdb.close();
 
@@ -378,6 +395,7 @@ public class survey extends Activity
                                    sr.q_operable + ", " +
                                    sr.q_flow + ", " +
                                    sr.q_style + ", " +
+                                   sr.q_location + ", " +
                                    sr.longitude + ", " +
                                    sr.latitude + ", " +
                                    sr.time + ", " +
