@@ -17,6 +17,7 @@ def decode_surveys(surveys):
         item['q_operable'] = decode_survey("operable", s.q_operable)
         item['q_flow'] = decode_survey("flow", s.q_flow)
         item['q_style'] = decode_survey("style", s.q_style)
+        item['q_location'] = decode_survey("location", s.q_location)
         item['longitude'] = s.longitude
         item['latitude'] = s.latitude
         item['key'] = str(s.key())
@@ -24,38 +25,47 @@ def decode_surveys(surveys):
     return decoded
 
 def decode_survey(q, v):
-    return {
-        'taste':
-            lambda v: {
-                '0': lambda: "Same as home tap",
-                '1': lambda: "Better",
-                '2': lambda: "Worse",
-                '3': lambda: "Can't answer"
-            }[v](),
-        'visibility':
-            lambda v: {
-                '0': lambda: "Visible",
-                '1': lambda: "Hidden"
-            }[v](),
-        'operable':
-            lambda v: {
-                '0': lambda: "Working",
-                '1': lambda: "Broken",
-                '2': lambda: "Needs repair"
-            }[v](),
-        'flow':
-            lambda v: {
-                '0': lambda: "Strong",
-                '1': lambda: "Trickle",
-                '2': lambda: "Too strong"
-            }[v](),
-        'style':
-            lambda v: {
-                '0': lambda: "Refilling",
-                '1': lambda: "Drinking",
-                '2': lambda: "Both"
-            }[v]()
-    }[q](v)
+    try:
+        ret = {
+            'taste':
+                lambda v: {
+                    '0': lambda: "Same as home tap",
+                    '1': lambda: "Better",
+                    '2': lambda: "Worse",
+                    '3': lambda: "Can't answer"
+                }[v](),
+            'visibility':
+                lambda v: {
+                    '0': lambda: "Visible",
+                    '1': lambda: "Hidden"
+                }[v](),
+            'operable':
+                lambda v: {
+                    '0': lambda: "Working",
+                    '1': lambda: "Broken",
+                    '2': lambda: "Needs repair"
+                }[v](),
+            'flow':
+                lambda v: {
+                    '0': lambda: "Strong",
+                    '1': lambda: "Trickle",
+                    '2': lambda: "Too strong"
+                }[v](),
+            'style':
+                lambda v: {
+                    '0': lambda: "Refilling",
+                    '1': lambda: "Drinking",
+                    '2': lambda: "Both"
+                }[v](),
+            'location':
+                lambda v: {
+                    '0': lambda: "Indoor",
+                    '1': lambda: "Outdoors"
+                }[v]()
+        }[q](v)
+        return ret
+    except KeyError:
+        return "Not rated"
 
 class Survey(db.Model):
     user = db.UserProperty()
@@ -65,6 +75,7 @@ class Survey(db.Model):
     q_operable =    db.StringProperty()
     q_flow =        db.StringProperty()
     q_style =       db.StringProperty()
+    q_location =    db.StringProperty()
     longitude =     db.StringProperty()
     latitude =      db.StringProperty()
     time =          db.StringProperty()
@@ -106,6 +117,7 @@ class UploadSurvey(webapp.RequestHandler):
         s.q_operable = self.request.get('q_operable')
         s.q_flow = self.request.get('q_flow')
         s.q_style = self.request.get('q_style')
+        s.q_location = self.request.get('q_location')
         s.longitude = self.request.get('longitude')
         s.latitude = self.request.get('latitude')
         s.time = self.request.get('time')
@@ -158,6 +170,7 @@ class GetAPoint(webapp.RequestHandler):
                     e['q_style'] = s.q_style
                     e['q_taste'] = s.q_taste
                     e['q_visibility'] = s.q_visibility
+                    e['q_location'] = s.q_location
                     e['version'] = s.version
                     self.response.out.write(json.dumps(e))
                     return
