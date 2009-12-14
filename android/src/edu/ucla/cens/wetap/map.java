@@ -217,6 +217,11 @@ public class map extends MapActivity {
                     case 1: return "Drinking";
                     case 2: return "Both";
                 }
+            } else if (q.equals("location")) {
+                switch (k) {
+                    case 0: return "Indoor";
+                    case 1: return "Outdoors";
+                }
             }
             return "";
         }

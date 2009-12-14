@@ -59,6 +59,7 @@ public class popup extends Activity {
         String style = "Not rated";
         String visibility = "Not rated";
         String taste = "Not rated";
+        String location = "Not specified";
 
         if (req_key != null && req_key != "") {
             String site_url = "http://we-tap.appspot.com/get_a_point?key=" + req_key;
@@ -73,6 +74,7 @@ public class popup extends Activity {
                 style = (String) entry.get("q_style");
                 visibility = (String) entry.get("q_visibility");
                 taste = (String) entry.get("q_taste");
+                location = (String) entry.get("q_location");
             } catch (JSONException e) { e.printStackTrace(); }
         }
 
@@ -97,6 +99,9 @@ public class popup extends Activity {
         
         tv = (TextView) findViewById (R.id.style_score);
         tv.setText (decode_survey("style", style));
+
+        tv = (TextView) findViewById (R.id.location_score);
+        tv.setText (decode_survey("location", location));
     }
 
     private String decode_survey (String q, String v) {
@@ -131,6 +136,11 @@ public class popup extends Activity {
                 case 0: return "Refilling";
                 case 1: return "Drinking";
                 case 2: return "Both";
+            }
+        } else if (q.equals("location")) {
+            switch (k) {
+                case 0: return "Indoor";
+                case 1: return "Outdoors";
             }
         }
         return "";

@@ -92,5 +92,21 @@
             android:paddingRight="10sp"
             android:text="" />
 
+        <TextView android:id="@+id/location_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/style_label"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="Location:" />
+        <TextView android:id="@+id/location_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/style_score"
+            android:layout_toRightOf="@id/location_label"
+            android:textSize="20sp"
+            android:paddingRight="10sp"
+            android:text="" />
+
     </RelativeLayout>
 </ScrollView>
