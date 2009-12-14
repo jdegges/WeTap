@@ -102,8 +102,8 @@ public class survey extends Activity
         // add operable boxes
         lcb = new ArrayList<CheckBox>();
         lcb.add( (CheckBox) findViewById(R.id.operable_functioning) );
-        lcb.add( (CheckBox) findViewById(R.id.operable_needs_repair) );
         lcb.add( (CheckBox) findViewById(R.id.operable_broken) );
+        lcb.add( (CheckBox) findViewById(R.id.operable_needs_repair) );
         group_box_list.add(lcb);
         Log.d(TAG, "added operable boxes");
 
