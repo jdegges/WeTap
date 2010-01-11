@@ -65,17 +65,36 @@ public class popup extends Activity {
             String site_url = "http://we-tap.appspot.com/get_a_point?key=" + req_key;
             String site_data = getUrlData (site_url);
 
-            try {
-                JSONObject entry = new JSONObject (site_data.toString());
-                flow = (String) entry.get("q_flow");
-                photo = (String) entry.get("photo");
-                operable = (String) entry.get("q_operable");
-                version = (String) entry.get("version");
-                style = (String) entry.get("q_style");
-                visibility = (String) entry.get("q_visibility");
-                taste = (String) entry.get("q_taste");
-                location = (String) entry.get("q_location");
-            } catch (JSONException e) { e.printStackTrace(); }
+            Log.d(TAG, "THE SITE URL: " + site_url);
+
+            JSONObject entry;
+            try { entry = new JSONObject (site_data.toString()); }
+            catch (JSONException e) { e.printStackTrace(); return; }
+
+            try { flow = (String) entry.get("q_flow"); }
+            catch (JSONException e) { flow = null; }
+            catch (ClassCastException e) { flow = null; }
+            try { photo = (String) entry.get("photo"); }
+            catch (JSONException e) { photo = null; }
+            catch (ClassCastException e) { photo = null; }
+            try { operable = (String) entry.get("q_operable"); }
+            catch (JSONException e) { operable = null; }
+            catch (ClassCastException e) { operable = null; }
+            try { version = (String) entry.get("version"); }
+            catch (JSONException e) { version = null; }
+            catch (ClassCastException e) { version = null; }
+            try { style = (String) entry.get("q_style"); }
+            catch (JSONException e) { style = null; }
+            catch (ClassCastException e) { style = null; }
+            try { visibility = (String) entry.get("q_visibility"); }
+            catch (JSONException e) { visibility = null; }
+            catch (ClassCastException e) { visibility = null; }
+            try { taste = (String) entry.get("q_taste"); }
+            catch (JSONException e) { taste = null; }
+            catch (ClassCastException e) { taste = null; }
+            try { location = (String) entry.get("q_location"); }
+            catch (JSONException e) { location = null; }
+            catch (ClassCastException e) { location = null; }
         }
 
         Log.d("POPUP", "about to set values from appspot");
@@ -105,7 +124,13 @@ public class popup extends Activity {
     }
 
     private String decode_survey (String q, String v) {
-        int k = Integer.valueOf(v);
+        int k;
+
+        if (q == null || v == null) {
+            return "Not rated";
+        }
+
+        k = Integer.valueOf(v);
 
         if (q.equals("taste")) {
             switch (k) {
@@ -143,7 +168,7 @@ public class popup extends Activity {
                 case 1: return "Outdoors";
             }
         }
-        return "";
+        return "Not rated";
     }
 
 
