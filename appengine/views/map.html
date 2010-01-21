@@ -3,11 +3,14 @@
 {% block title %}Google Map{% endblock %}
 
 {% block includes %}
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAxbmfF4s8V6aW7q4K7J8svRRMK0JKVrksL0mowNee39efPEHpdBSjKv97X6g_rIkM81_0WqCZTFCwqA"
-            type="text/javascript"></script> 
+    <script src="http://www.google.com/jsapi?key=ABQIAAAAkUIiEfM2SYnpO0mGD7s2VxRMK0JKVrksL0mowNee39efPEHpdBSt45sBnLoW4T6NV_qRDCE4n9zFtw" type="text/javascript"></script>
 {% endblock %}
 
 {% block javascript %}
+
+    // Load Google Maps API
+    google.load("maps", "2");
+
     function initialize() {
         if (GBrowserIsCompatible()) {
             var mapOptions = {
@@ -17,7 +20,44 @@
             }
 
             var map = new GMap2(document.getElementById("map_canvas"), mapOptions);
-            map.setCenter(new GLatLng(34.069209, -118.443161), 14);
+            //// Center Map
+	   // Default to UCLA location
+	   var initialLat =  34.069209;
+            var initialLng = -118.443161; 
+	   var initialZoom = 14;
+		
+	   // If the user is using a browser that supports the new Geolocation API by WC3, get lat and lng that way
+	   if(navigator.geolocation) {
+	       // handles successful attempt to get accurate user location information
+	       function setUserLatLng(position) {
+	           // set centered at (position.coords.latitude, position.coords.longitude).
+		  initialLat = position.coords.latitude;
+	           initialLng = position.coords.longitude;
+		  initialZoom = 16;
+	       }
+			
+	       // One-shot position request.
+	       navigator.geolocation.getCurrentPosition(setUserLatLng);
+	   }		
+	   else {
+               // otherwise use google's API
+	      if(google.loader.ClientLocation &&
+		google.loader.ClientLocation.address.country_code == "US" &&
+		google.loader.ClientLocation.address.region) {
+		// If the client information is available, set center to the client locaiton
+	             initialLat = google.loader.ClientLocation.latitude;
+		    initialLng = google.loader.ClientLocation.longitude;
+                      initialZoom = 13;
+	      }
+               else {
+	          // FOR DEBUGGING
+		 //alert("Client Information Not Available");
+	      }
+            }
+        
+            var startingCenter = new GLatLng(initialLat, initialLng);
+	   map.setCenter(startingCenter, initialZoom);  
+
             map.setUIToDefault();
             map.enableGoogleBar();
  
