@@ -3,7 +3,7 @@
 {% block title %}Google Map{% endblock %}
 
 {% block includes %}
-    <script src="http://www.google.com/jsapi?key=ABQIAAAAkUIiEfM2SYnpO0mGD7s2VxRMK0JKVrksL0mowNee39efPEHpdBSt45sBnLoW4T6NV_qRDCE4n9zFtw" type="text/javascript"></script>
+    <script type="text/javascript" src="http://www.google.com/jsapi?autoload=%7B%22modules%22%3A%5B%7B%22name%22%3A%22maps%22%2C%22version%22%3A%222%22%7D%5D%7D&key=ABQIAAAAkUIiEfM2SYnpO0mGD7s2VxRMK0JKVrksL0mowNee39efPEHpdBSt45sBnLoW4T6NV_qRDCE4n9zFtw"></script>
 {% endblock %}
 
 {% block javascript %}
@@ -21,42 +21,42 @@
 
             var map = new GMap2(document.getElementById("map_canvas"), mapOptions);
             //// Center Map
-	   // Default to UCLA location
-	   var initialLat =  34.069209;
+            // Default to UCLA location
+            var initialLat =  34.069209;
             var initialLng = -118.443161; 
-	   var initialZoom = 14;
+            var initialZoom = 14;
 		
-	   // If the user is using a browser that supports the new Geolocation API by WC3, get lat and lng that way
-	   if(navigator.geolocation) {
-	       // handles successful attempt to get accurate user location information
-	       function setUserLatLng(position) {
-	           // set centered at (position.coords.latitude, position.coords.longitude).
-		  initialLat = position.coords.latitude;
-	           initialLng = position.coords.longitude;
-		  initialZoom = 16;
-	       }
-			
-	       // One-shot position request.
-	       navigator.geolocation.getCurrentPosition(setUserLatLng);
-	   }		
-	   else {
-               // otherwise use google's API
-	      if(google.loader.ClientLocation &&
-		google.loader.ClientLocation.address.country_code == "US" &&
-		google.loader.ClientLocation.address.region) {
-		// If the client information is available, set center to the client locaiton
-	             initialLat = google.loader.ClientLocation.latitude;
-		    initialLng = google.loader.ClientLocation.longitude;
-                      initialZoom = 13;
-	      }
-               else {
-	          // FOR DEBUGGING
-		 //alert("Client Information Not Available");
-	      }
+            // If the user is using a browser that supports the new Geolocation API by WC3, get lat and lng that way
+            if(navigator.geolocation) {
+                // handles successful attempt to get accurate user location information
+                function setUserLatLng(position) {
+                    // set centered at (position.coords.latitude, position.coords.longitude)
+                    initialLat = position.coords.latitude;
+                    initialLng = position.coords.longitude;
+                    initialZoom = 16;
+                }
+
+                // One-shot position request.
+                navigator.geolocation.getCurrentPosition(setUserLatLng);
+            }		
+            else {
+                // otherwise use google's API
+                if(google.loader.ClientLocation &&
+                google.loader.ClientLocation.address.country_code == "US" &&
+                google.loader.ClientLocation.address.region) {
+                    // If the client information is available, set center to the client locaiton
+                    initialLat = google.loader.ClientLocation.latitude;
+                    initialLng = google.loader.ClientLocation.longitude;
+                    initialZoom = 13;
+                }
+                else {
+                    // FOR DEBUGGING
+                    //alert("Client Information Not Available");
+                }
             }
         
             var startingCenter = new GLatLng(initialLat, initialLng);
-	   map.setCenter(startingCenter, initialZoom);  
+            map.setCenter(startingCenter, initialZoom);  
 
             map.setUIToDefault();
             map.enableGoogleBar();
