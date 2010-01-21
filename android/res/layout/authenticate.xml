@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView 
+  xmlns:android="http://schemas.android.com/apk/res/android" 
+  android:layout_width="fill_parent" 
+  android:layout_height="fill_parent"
+  android:background="@drawable/background"
+  > 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background">
+
+    <ImageView android:id="@+id/logo" android:layout_width="fill_parent" android:layout_height="wrap_content" android:src="@drawable/headersmall" android:paddingBottom="20px"/>
+        
+    <TextView
+    	android:id="@+id/description"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Please Enter your Google Email and Password"
+        android:layout_below="@+id/logo"
+        android:layout_marginBottom="25px"
+        android:background="@drawable/background"
+		android:textColor="@drawable/textcolor"/>
+        
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Email:"
+        android:layout_below="@+id/description" 
+        android:layout_marginTop="10px" 
+        android:paddingLeft="5px"
+        android:background="@drawable/background"
+		android:textColor="@drawable/textcolor"/>
+
+
+    <EditText 
+    	android:id="@+id/email" 
+    	android:layout_width="fill_parent" 
+    	android:layout_height="wrap_content" 
+    	android:layout_below="@+id/description"
+    	android:layout_marginLeft="75px" 
+    	android:inputType="textEmailAddress"
+    	android:height="40px"/>
+    	
+    <TextView
+        android:id="@+id/tv2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Password:"
+        android:layout_below="@+id/email" 
+        android:layout_marginTop="10px" 
+        android:paddingLeft="5px"
+        android:background="@drawable/background"
+		android:textColor="@drawable/textcolor"/>
+
+
+    <EditText 
+    	android:id="@+id/password" 
+    	android:layout_width="fill_parent" 
+    	android:layout_height="wrap_content" 
+    	android:layout_below="@+id/email"
+    	android:layout_marginLeft="75px"
+    	android:inputType="textPassword"
+    	android:height="40px"/>
+
+    <CheckBox
+        android:id="@+id/save_login"
+        android:layout_below="@id/tv2"
+        android:layout_marginTop="20px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="Save for next time"/>
+    
+    <Button
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login" 
+        android:layout_below="@+id/password"
+        android:layout_alignParentRight="true"/>
+
+</RelativeLayout>
+</ScrollView>
