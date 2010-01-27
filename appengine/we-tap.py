@@ -49,7 +49,8 @@ def decode_survey(q, v):
                 lambda v: {
                     '0': lambda: "Strong",
                     '1': lambda: "Trickle",
-                    '2': lambda: "Too strong"
+                    '2': lambda: "Too strong",
+                    '3': lambda: "Can't answer"
                 }[v](),
             'style':
                 lambda v: {
@@ -89,7 +90,7 @@ class HomePage(webapp.RequestHandler):
 
 class MapPage(webapp.RequestHandler):
     def get(self):
-        surveys = Survey.all().fetch(100)
+        surveys = Survey.all().fetch(1000)
         decoded = decode_surveys (surveys)
         template_values = { 'surveys' : decoded }
         path = os.path.join (os.path.dirname(__file__), 'views/map.html')
@@ -134,7 +135,7 @@ class UploadSurvey(webapp.RequestHandler):
 
 class GetPointSummary(webapp.RequestHandler):
     def get(self):
-        surveys = db.GqlQuery("SELECT * FROM Survey ORDER BY timestamp DESC LIMIT 100")
+        surveys = db.GqlQuery("SELECT * FROM Survey ORDER BY timestamp DESC LIMIT 1000")
         d = {}
         i = 0
         for s in surveys:
