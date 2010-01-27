@@ -48,6 +48,7 @@ import android.view.MenuItem;
 
 import android.content.res.Resources;
 import android.content.Intent;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import android.app.Activity;
@@ -136,20 +137,36 @@ public class map extends MapActivity {
     public boolean onCreateOptionsMenu (Menu m) {
         super.onCreateOptionsMenu (m);
 
-        m.add (Menu.NONE, 0, Menu.NONE, "Survey").setIcon (android.R.drawable.ic_menu_agenda);
+        m.add (Menu.NONE, 0, Menu.NONE, "Home").setIcon (android.R.drawable.ic_menu_revert);
+        m.add (Menu.NONE, 1, Menu.NONE, "Survey").setIcon (android.R.drawable.ic_menu_agenda);
+        m.add (Menu.NONE, 2, Menu.NONE, "About").setIcon (android.R.drawable.ic_menu_info_details);
+        m.add (Menu.NONE, 3, Menu.NONE, "Instructions").setIcon (android.R.drawable.ic_menu_help);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected (MenuItem i) {
-        switch (i.getItemId()) {
+    public boolean onOptionsItemSelected (MenuItem index) {
+        Context ctx = map.this;
+        Intent i;
+        switch (index.getItemId()) {
             case 0:
-                map.this.startActivity (new Intent(map.this, survey.class));
-                map.this.finish();
-                return true;
+                i = new Intent (ctx, home.class);
+                break;
+            case 1:
+                i = new Intent (ctx, survey.class);
+                break;
+            case 2:
+                i = new Intent (ctx, about.class);
+                break;  
+            case 3:
+                i = new Intent (ctx, instructions.class);
+                break;
             default:
                 return false;
         }
+        ctx.startActivity (i);
+        this.finish();
+        return true;
     }
 
     public class MySiteOverlay<Item> extends ItemizedOverlay {
@@ -189,33 +206,41 @@ public class map extends MapActivity {
 
             if (q.equals("taste")) {
                 switch (k) {
-                    case 0: return "Same as home tap";
-                    case 1: return "Better";
-                    case 2: return "Worse";
-                    case 3: return "Can't answer";
+                    case 0: return "Not applicable";
+                    case 1: return "Same as home tap";
+                    case 2: return "Better than home tap";
+                    case 3: return "Worse than home tap";
+                    case 4: return "Can't answer";
                 }
             } else if (q.equals("visibility")) {
                 switch (k) {
-                    case 0: return "Visible";
-                    case 1: return "Hidden";
+                    case 1: return "Visible";
+                    case 2: return "Hidden";
                 }
             } else if (q.equals("operable")) {
                 switch (k) {
-                    case 0: return "Working";
-                    case 1: return "Broken";
-                    case 2: return "Needs repair";
+                    case 1: return "Working";
+                    case 2: return "Broken";
+                    case 3: return "Needs repair";
                 }
             } else if (q.equals("flow")) {
                 switch (k) {
-                    case 0: return "Strong";
-                    case 1: return "Trickle";
-                    case 2: return "Too strong";
+                    case 0: return "Not applicable";
+                    case 1: return "Strong";
+                    case 2: return "Trickle";
+                    case 3: return "Too strong";
                 }
-            } else if (q.equals("style")) {
+            } else if (q.equals("binary")) {
                 switch (k) {
-                    case 0: return "Refilling";
-                    case 1: return "Drinking";
-                    case 2: return "Both";
+                    case 0: return "No";
+                    case 1: return "Yes";
+                }
+            } else if (q.equals("refill_aux")) {
+                switch (k) {
+                    case 0: return "Not applicable";
+                    case 1: return "No room";
+                    case 2: return "Not enough water flow.";
+                    case 3: return "Other";
                 }
             } else if (q.equals("location")) {
                 switch (k) {
@@ -241,10 +266,13 @@ public class map extends MapActivity {
                 websiteData = generateString(data);
             } catch (ClientProtocolException e) {
                 e.printStackTrace();
+                return "";
             } catch (IOException e) {
                 e.printStackTrace();
+                return "";
             } catch (URISyntaxException e) {
                 e.printStackTrace();
+                return "";
             }
             return websiteData;
         }
