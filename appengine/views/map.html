@@ -71,7 +71,10 @@
                                "<b>Visibility: </b>{{s.q_visibility}}<br/>" +
                                "<b>Operable: </b>{{s.q_operable}}<br/>" +
                                "<b>Flow: </b>{{s.q_flow}}<br/>" +
-                               "<b>Style: </b>{{s.q_style}}<br/>" +
+                               "<b>Wheelchair accessible: </b>{{s.q_wheel}}<br/>" +
+                               "<b>Child accessible: </b>{{s.q_child}}<br/>" +
+                               "<b>Can refill water bottle: </b>{{s.q_refill}}<br/>" +
+                               "<b>Unable to refill because: </b><br/>{{s.q_refill_aux}}<br/>" +
                                "<b>Location: </b>{{s.q_location}}" +
                                "</p>";
                     map.openInfoWindowHtml(new GLatLng({{s.latitude}}, {{s.longitude}}), html);

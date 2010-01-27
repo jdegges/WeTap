@@ -16,7 +16,10 @@ def decode_surveys(surveys):
         item['q_visibility'] = decode_survey("visibility", s.q_visibility)
         item['q_operable'] = decode_survey("operable", s.q_operable)
         item['q_flow'] = decode_survey("flow", s.q_flow)
-        item['q_style'] = decode_survey("style", s.q_style)
+        item['q_wheel'] = decode_survey("wheel", s.q_wheel)
+        item['q_child'] = decode_survey("child", s.q_child)
+        item['q_refill'] = decode_survey("refill", s.q_refill)
+        item['q_refill_aux'] = decode_survey("refill_aux", s.q_refill_aux)
         item['q_location'] = decode_survey("location", s.q_location)
         item['longitude'] = s.longitude
         item['latitude'] = s.latitude
@@ -29,39 +32,57 @@ def decode_survey(q, v):
         ret = {
             'taste':
                 lambda v: {
-                    '0': lambda: "Same as home tap",
-                    '1': lambda: "Better",
-                    '2': lambda: "Worse",
-                    '3': lambda: "Can't answer"
+                    '0': lambda: "Not applicable",
+                    '1': lambda: "Same as home tap",
+                    '2': lambda: "Better than home tap",
+                    '3': lambda: "Worse than home tap",
+                    '4': lambda: "Can't answer"
                 }[v](),
             'visibility':
                 lambda v: {
-                    '0': lambda: "Visible",
-                    '1': lambda: "Hidden"
+                    '1': lambda: "Visible",
+                    '2': lambda: "Hidden"
                 }[v](),
             'operable':
                 lambda v: {
-                    '0': lambda: "Working",
-                    '1': lambda: "Broken",
-                    '2': lambda: "Needs repair"
+                    '1': lambda: "Working",
+                    '2': lambda: "Broken",
+                    '3': lambda: "Needs repair"
                 }[v](),
             'flow':
                 lambda v: {
-                    '0': lambda: "Strong",
-                    '1': lambda: "Trickle",
-                    '2': lambda: "Too strong",
-                    '3': lambda: "Can't answer"
+                    '0': lambda: "Not applicable",
+                    '1': lambda: "Strong",
+                    '2': lambda: "Trickle",
+                    '3': lambda: "Too strong",
+                    '4': lambda: "Can't answer"
                 }[v](),
-            'style':
+            'wheel':
                 lambda v: {
-                    '0': lambda: "Refilling",
-                    '1': lambda: "Drinking",
-                    '2': lambda: "Both"
+                    '0': lambda: "No",
+                    '1': lambda: "Yes"
+                }[v](),
+            'child':
+                lambda v: {
+                    '0': lambda: "No",
+                    '1': lambda: "Yes"
+                }[v](),
+            'refill':
+                lambda v: {
+                    '0': lambda: "No",
+                    '1': lambda: "Yes"
+                }[v](),
+            'refill_aux':
+                lambda v: {
+                    '0': lambda: "Not applicable",
+                    '1': lambda: "No room",
+                    '2': lambda: "Not enough water flow",
+                    '3': lambda: "Other"
                 }[v](),
             'location':
                 lambda v: {
-                    '0': lambda: "Indoor",
-                    '1': lambda: "Outdoors"
+                    '1': lambda: "Indoor",
+                    '2': lambda: "Outdoors"
                 }[v]()
         }[q](v)
         return ret
@@ -75,7 +96,10 @@ class Survey(db.Model):
     q_visibility =  db.StringProperty()
     q_operable =    db.StringProperty()
     q_flow =        db.StringProperty()
-    q_style =       db.StringProperty()
+    q_wheel =       db.StringProperty()
+    q_child =       db.StringProperty()
+    q_refill =      db.StringProperty()
+    q_refill_aux =  db.StringProperty()
     q_location =    db.StringProperty()
     longitude =     db.StringProperty()
     latitude =      db.StringProperty()
@@ -117,7 +141,10 @@ class UploadSurvey(webapp.RequestHandler):
         s.q_visibility = self.request.get('q_visibility')
         s.q_operable = self.request.get('q_operable')
         s.q_flow = self.request.get('q_flow')
-        s.q_style = self.request.get('q_style')
+        s.q_wheel = self.request.get('q_wheel')
+        s.q_child = self.request.get('q_child')
+        s.q_refill = self.request.get('q_refill')
+        s.q_refill_aux = self.request.get('q_refill_aux')
         s.q_location = self.request.get('q_location')
         s.longitude = self.request.get('longitude')
         s.latitude = self.request.get('latitude')
@@ -168,7 +195,10 @@ class GetAPoint(webapp.RequestHandler):
                     e['photo'] = "http://we-tap.appspot.com/get_image_thumb?key=" + req_key;
                     e['q_flow'] = s.q_flow
                     e['q_operable'] = s.q_operable
-                    e['q_style'] = s.q_style
+                    e['q_wheel'] = s.q_wheel
+                    e['q_child'] = s.q_child
+                    e['q_refill'] = s.q_refill
+                    e['q_refill_aux'] = s.q_refill_aux
                     e['q_taste'] = s.q_taste
                     e['q_visibility'] = s.q_visibility
                     e['q_location'] = s.q_location
