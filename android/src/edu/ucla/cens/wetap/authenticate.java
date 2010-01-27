@@ -169,6 +169,7 @@ public class authenticate extends Activity implements Runnable {
             request.setEntity(entity);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            return false;
         }
         try {
             
@@ -183,6 +184,7 @@ public class authenticate extends Activity implements Runnable {
             authToken = generateString(response.getEntity().getContent()).split("\n")[2].substring(5);
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
 
         Log.d(TAG, "google auth successful!");
