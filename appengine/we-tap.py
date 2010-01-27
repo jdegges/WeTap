@@ -89,7 +89,7 @@ class HomePage(webapp.RequestHandler):
 
 class MapPage(webapp.RequestHandler):
     def get(self):
-        surveys = Survey.all().fetch(10)
+        surveys = Survey.all().fetch(100)
         decoded = decode_surveys (surveys)
         template_values = { 'surveys' : decoded }
         path = os.path.join (os.path.dirname(__file__), 'views/map.html')
@@ -134,7 +134,7 @@ class UploadSurvey(webapp.RequestHandler):
 
 class GetPointSummary(webapp.RequestHandler):
     def get(self):
-        surveys = db.GqlQuery("SELECT * FROM Survey ORDER BY timestamp DESC LIMIT 10")
+        surveys = db.GqlQuery("SELECT * FROM Survey ORDER BY timestamp DESC LIMIT 100")
         d = {}
         i = 0
         for s in surveys:
