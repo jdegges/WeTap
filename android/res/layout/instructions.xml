@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_view"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background">
+
+    <TextView
+        android:id="@+id/logo"
+        android:layout_width="fill_parent"
+        android:layout_height="75sp"
+        android:textStyle="bold"
+        android:textSize="35sp"
+        android:textColor="@drawable/textcolor"
+        android:gravity="center"
+        android:text="@string/app_name"
+        />
+
+    <TextView
+        android:id="@+id/start_survey"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/logo"
+        android:paddingLeft="20sp"
+        android:paddingRight="20sp"
+        android:paddingBottom="20sp"
+        android:textSize="23sp"
+        android:text="@string/instructions_content"
+        />
+
+</RelativeLayout>
+
+</ScrollView>

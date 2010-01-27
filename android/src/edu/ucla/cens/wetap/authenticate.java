@@ -144,7 +144,7 @@ public class authenticate extends Activity implements Runnable {
         public void handleMessage(Message msg) {
             mProgressDialog.dismiss();
             if(msg.getData().getBoolean("authenticated")) {
-                authenticate.this.startActivity(new Intent(authenticate.this, survey.class));
+                authenticate.this.startActivity(new Intent(authenticate.this, home.class)); /// XXX survey.class
                 Log.d(TAG, "started survey intent");
                 startService(new Intent(authenticate.this, survey_upload.class));
                 Log.d(TAG, "started survey upload intent");
@@ -225,7 +225,7 @@ public class authenticate extends Activity implements Runnable {
             .setCancelable(false)
             .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
                 public void onClick(final DialogInterface dialog, final int id) {
-                    authenticate.this.startActivity(new Intent(authenticate.this, survey.class));
+                    authenticate.this.startActivity(new Intent(authenticate.this, home.class)); // XXX survey.class
                     Log.d(TAG, "started survey intent");
                     startService(new Intent(authenticate.this, survey_upload.class));
                     Log.d(TAG, "started survey upload intent");

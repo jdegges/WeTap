@@ -108,7 +108,8 @@ public class survey_upload extends Service{
 						{
 							if(doPost(getString(R.string.surveyuploadurl),
                                       sr.q_taste, sr.q_visibility,
-                                      sr.q_operable, sr.q_flow, sr.q_style,
+                                      sr.q_operable, sr.q_flow, sr.q_wheel,
+                                      sr.q_child, sr.q_refill, sr.q_refill_aux,
                                       sr.q_location, sr.longitude, sr.latitude,
                                       sr.time, sr.version, sr.photo_filename))
 							{
@@ -148,9 +149,11 @@ public class survey_upload extends Service{
 		 * efficient then let me know (vids@ucla.edu) Thanks.
 		 */
 	    private boolean doPost(String url, String q_taste, String q_visibility,
-                               String q_operable, String q_flow, String q_style,
-                               String q_location, String longitude,
-                               String latitude, String time, String version,
+                               String q_operable, String q_flow,
+                               String q_wheel, String q_child, String q_refill,
+                               String q_refill_aux, String q_location,
+                               String longitude, String latitude, String time,
+                               String version,
                                String photo_filename) throws IOException
 	    {
 	    	Log.d(TAG, "Attempting to send file:" + photo_filename);
@@ -166,7 +169,10 @@ public class survey_upload extends Service{
 	    	entity.addPart("q_visibility", new StringBody(q_visibility.toString()));
             entity.addPart("q_operable", new StringBody(q_operable.toString()));
             entity.addPart("q_flow", new StringBody(q_flow.toString()));
-            entity.addPart("q_style", new StringBody(q_style.toString()));
+            entity.addPart("q_wheel", new StringBody(q_wheel.toString()));
+            entity.addPart("q_child", new StringBody(q_child.toString()));
+            entity.addPart("q_refill", new StringBody(q_refill.toString()));
+            entity.addPart("q_refill_aux", new StringBody(q_refill_aux.toString()));
             entity.addPart("q_location", new StringBody(q_location.toString()));
             entity.addPart("longitude", new StringBody(longitude.toString()));
             entity.addPart("latitude", new StringBody(latitude.toString()));

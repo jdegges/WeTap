@@ -11,4 +11,18 @@
     <string name="baseurl">http://we-tap.appspot.com</string>
     <string name="loginurl">http://we-tap.appspot.com/_ah/login</string>
     <string name="surveyuploadurl">"http://we-tap.appspot.com/upload_survey"</string>
+
+    <string name="question_5_label">Access:</string>
+    <string name="question_5_option_0">Wheelchair accessible</string>
+    <string name="question_5_option_1">Child accessible</string>
+    <string name="question_5_option_2">Refill water bottle</string>
+
+    <string name="question_6_label">Why couldn't you refill?</string>
+    <string name="question_6_option_0">No Room</string>
+    <string name="question_6_option_1">Water Flow</string>
+    <string name="question_6_option_2">Other</string>
+
+    <string name="about_content">WeTap is a participatory sensing campaign geared towards identifying, describing and mapping public drinking fountains. With this Android application you can view a map of nearby drinking water sources as well as rate specific fountains and assist in helping this vital public infrastructure improve. The goal of this application is to support those who have said no to bottled water and help others join the cause. Save money, reduce single use plastic, tell a friend!</string>
+
+    <string name="instructions_content">Press \"Menu\" and select \"Survey\" to be taken to the survey form. Answer the questions on that page and snap a picture of the fountain to help us better keep track of all the fountains that have been mapped. Once you are finished click \"Upload\" and your responses will be sent to http://we-tap.appspot.com where they will be automatically displayed on a live map!</string>
 </resources>

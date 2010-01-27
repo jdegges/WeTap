@@ -52,13 +52,16 @@ public class popup extends Activity {
         SharedPreferences perf = this.getSharedPreferences(getString(R.string.preferences), Activity.MODE_PRIVATE);
         String req_key = perf.getString("site_key", "");
 
-        String flow = "Not rated";
+        String flow = "Not applicable";
         String photo = ""; 
         String operable = "Not rated";
         String version = "Not rated";
-        String style = "Not rated";
+        String wheel = "No";
+        String child = "No";
+        String refill = "No";
+        String refill_aux = "Not applicable";
         String visibility = "Not rated";
-        String taste = "Not rated";
+        String taste = "Not applicable";
         String location = "Not specified";
 
         if (req_key != null && req_key != "") {
@@ -83,9 +86,18 @@ public class popup extends Activity {
             try { version = (String) entry.get("version"); }
             catch (JSONException e) { version = null; }
             catch (ClassCastException e) { version = null; }
-            try { style = (String) entry.get("q_style"); }
-            catch (JSONException e) { style = null; }
-            catch (ClassCastException e) { style = null; }
+            try { wheel = (String) entry.get("q_wheel"); }
+            catch (JSONException e) { wheel = null; }
+            catch (ClassCastException e) { wheel = null; }
+            try { child = (String) entry.get("q_child"); }
+            catch (JSONException e) { child = null; }
+            catch (ClassCastException e) { child = null; }
+            try { refill = (String) entry.get("q_refill"); }
+            catch (JSONException e) { refill = null; }
+            catch (ClassCastException e) { refill = null; }
+            try { refill_aux = (String) entry.get("q_refill_aux"); }
+            catch (JSONException e) { refill_aux = null; }
+            catch (ClassCastException e) { refill_aux = null; }
             try { visibility = (String) entry.get("q_visibility"); }
             catch (JSONException e) { visibility = null; }
             catch (ClassCastException e) { visibility = null; }
@@ -116,8 +128,17 @@ public class popup extends Activity {
         tv = (TextView) findViewById (R.id.flow_score);
         tv.setText (decode_survey("flow", flow));
         
-        tv = (TextView) findViewById (R.id.style_score);
-        tv.setText (decode_survey("style", style));
+        tv = (TextView) findViewById (R.id.wheel_score);
+        tv.setText (decode_survey("binary", wheel));
+
+        tv = (TextView) findViewById (R.id.child_score);
+        tv.setText (decode_survey("binary", child));
+
+        tv = (TextView) findViewById (R.id.refill_score);
+        tv.setText (decode_survey("binary", refill));
+
+        tv = (TextView) findViewById (R.id.refill_aux_score);
+        tv.setText (decode_survey("refill_aux", refill_aux));
 
         tv = (TextView) findViewById (R.id.location_score);
         tv.setText (decode_survey("location", location));
@@ -134,38 +155,46 @@ public class popup extends Activity {
 
         if (q.equals("taste")) {
             switch (k) {
-                case 0: return "Same as home tap";
-                case 1: return "Better";
-                case 2: return "Worse";
-                case 3: return "Can't answer";
+                case 0: return "Not applicable";
+                case 1: return "Same as home tap";
+                case 2: return "Better than home tap";
+                case 3: return "Worse than home tap";
+                case 4: return "Can't answer";
             }
         } else if (q.equals("visibility")) {
             switch (k) {
-                case 0: return "Visible";
-                case 1: return "Hidden";
+                case 1: return "Visible";
+                case 2: return "Hidden";
             }
         } else if (q.equals("operable")) {
             switch (k) {
-                case 0: return "Working";
-                case 1: return "Broken";
-                case 2: return "Needs repair";
+                case 1: return "Working";
+                case 2: return "Broken";
+                case 3: return "Needs repair";
             }
         } else if (q.equals("flow")) {
             switch (k) {
-                case 0: return "Strong";
-                case 1: return "Trickle";
-                case 2: return "Too strong";
+                case 0: return "Not applicable";
+                case 1: return "Strong";
+                case 2: return "Trickle";
+                case 3: return "Too strong";
             }
-        } else if (q.equals("style")) {
+        } else if (q.equals("binary")) {
             switch (k) {
-                case 0: return "Refilling";
-                case 1: return "Drinking";
-                case 2: return "Both";
+                case 0: return "No";
+                case 1: return "Yes";
+            }
+        } else if (q.equals("refill_aux")) {
+            switch (k) {
+                case 0: return "Not applicable";
+                case 1: return "No room";
+                case 2: return "Not enough water flow.";
+                case 3: return "Other";
             }
         } else if (q.equals("location")) {
             switch (k) {
-                case 0: return "Indoor";
-                case 1: return "Outdoors";
+                case 1: return "Indoor";
+                case 2: return "Outdoors";
             }
         }
         return "Not rated";

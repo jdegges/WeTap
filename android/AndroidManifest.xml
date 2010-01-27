@@ -13,6 +13,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".home"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.DEFAULT" />
+                <category android:name="android.intent.category.VIEW" />
+            </intent-filter>
+        </activity>
         <activity android:name=".authenticate"
                   android:label="@string/app_name">
             <intent-filter>
@@ -51,6 +58,16 @@
                 <action android:name="android.intent.action.DEFAULT" />
                 <category android:name="android.intent.category.VIEW" />
             </intent-filter>
+        </activity>
+        <activity android:name=".about"
+                  android:label="@string/app_name">
+                <action android:name="android.intent.action.DEFAULT" />
+                <category android:name="android.intent.category.VIEW" />
+        </activity>
+        <activity android:name=".instructions"
+                  android:label="@string/app_name">
+                <action android:name="android.intent.action.DEFAULT" />
+                <category android:name="android.intent.category.VIEW" />
         </activity>
         <uses-library android:name="com.google.android.maps" />
     </application>

@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.CheckBox;
+import android.widget.TableRow;
 import android.app.AlertDialog;
        
 
@@ -54,6 +55,15 @@ public class survey extends Activity
     private light_loc ll;
     private survey_db sdb;
     private SharedPreferences preferences;
+    private final int GB_INDEX_OPER = 0;
+    private final int GB_INDEX_TASTE = 1;
+    private final int GB_INDEX_FLOW = 2;
+    private final int GB_INDEX_WHEEL = 3;
+    private final int GB_INDEX_CHILD = 4;
+    private final int GB_INDEX_REFILL = 5;
+    private final int GB_INDEX_REFILL_AUX = 6;
+    private final int GB_INDEX_VIS = 7;
+    private final int GB_INDEX_LOC = 8;
 
     /** Called when the activity is first created. */
     @Override
@@ -83,21 +93,7 @@ public class survey extends Activity
 
         Log.d(TAG, "gps listener and db are started");
 
-        // add taste boxes
-        ArrayList<CheckBox> lcb = new ArrayList<CheckBox>();
-        lcb.add( (CheckBox) findViewById(R.id.taste_same) );
-        lcb.add( (CheckBox) findViewById(R.id.taste_good) );
-        lcb.add( (CheckBox) findViewById(R.id.taste_bad) );
-        lcb.add( (CheckBox) findViewById(R.id.taste_other) );
-        group_box_list.add(lcb);
-        Log.d(TAG, "added taste boxes");
-
-        // add visibility boxes
-        lcb = new ArrayList<CheckBox>();
-        lcb.add( (CheckBox) findViewById(R.id.visibility_visible) );
-        lcb.add( (CheckBox) findViewById(R.id.visibility_hidden) );
-        group_box_list.add(lcb);
-        Log.d(TAG, "added visibility boxes");
+        ArrayList<CheckBox> lcb;
 
         // add operable boxes
         lcb = new ArrayList<CheckBox>();
@@ -107,21 +103,56 @@ public class survey extends Activity
         group_box_list.add(lcb);
         Log.d(TAG, "added operable boxes");
 
+        // add taste boxes
+        lcb = new ArrayList<CheckBox>();
+        lcb.add( (CheckBox) findViewById(R.id.taste_same) );
+        lcb.add( (CheckBox) findViewById(R.id.taste_good) );
+        lcb.add( (CheckBox) findViewById(R.id.taste_bad) );
+        lcb.add( (CheckBox) findViewById(R.id.taste_other) );
+        group_box_list.add(lcb);
+        Log.d(TAG, "added taste boxes");
+
         // add flow boxes
         lcb = new ArrayList<CheckBox>();
         lcb.add( (CheckBox) findViewById(R.id.flow_strong) );
         lcb.add( (CheckBox) findViewById(R.id.flow_trickle) );
         lcb.add( (CheckBox) findViewById(R.id.flow_too_strong) );
+        lcb.add( (CheckBox) findViewById(R.id.flow_cant_answer) );
         group_box_list.add(lcb);
         Log.d(TAG, "added flow boxes");
 
-        // add style boxes
+        // add access wheelchair box:
         lcb = new ArrayList<CheckBox>();
-        lcb.add( (CheckBox) findViewById(R.id.style_refilling) );
-        lcb.add( (CheckBox) findViewById(R.id.style_drinking) );
-        lcb.add( (CheckBox) findViewById(R.id.style_both) );
+        lcb.add( (CheckBox) findViewById(R.id.question_5_option_0) );
         group_box_list.add(lcb);
-        Log.d(TAG, "added style boxes");
+        Log.d(TAG, "added wheelchair box");
+
+        // add access child box:
+        lcb = new ArrayList<CheckBox>();
+        lcb.add( (CheckBox) findViewById(R.id.question_5_option_1) );
+        group_box_list.add(lcb);
+        Log.d(TAG, "added child box");
+
+        // add access refill box:
+        lcb = new ArrayList<CheckBox>();
+        lcb.add( (CheckBox) findViewById(R.id.question_5_option_2) );
+        group_box_list.add(lcb);
+        Log.d(TAG, "added refill box");
+
+        // add alternate accessibility questions
+        lcb = new ArrayList<CheckBox>();
+        lcb.add( (CheckBox) findViewById(R.id.question_6_option_0) );
+        lcb.add( (CheckBox) findViewById(R.id.question_6_option_1) );
+        lcb.add( (CheckBox) findViewById(R.id.question_6_option_2) );
+        group_box_list.add(lcb);
+        Log.d(TAG, "added alternate accessibility boxes");
+
+        // add visibility boxes
+        lcb = new ArrayList<CheckBox>();
+        lcb.add( (CheckBox) findViewById(R.id.visibility_visible) );
+        lcb.add( (CheckBox) findViewById(R.id.visibility_hidden) );
+        group_box_list.add(lcb);
+        Log.d(TAG, "added visibility boxes");
 
         // add location boxes
         lcb = new ArrayList<CheckBox>();
@@ -171,16 +202,20 @@ public class survey extends Activity
                     CheckBox cb = (CheckBox) lcb.get(j);
                     if (j == k) {
                         cb.setChecked(true);
-                    } else {
-                        cb.setChecked(false);
+                        update_checkbox_status (cb);
+                        break;
+//                    } else {
+//                        cb.setChecked(false);
                     }
                 }
             }
 
             filename = savedInstanceState.getString("filename");
-            if ((null != filename) && (filename.toString() != "")) {
+            if ((null != filename) && (!filename.toString().equals(""))) {
                 Bitmap bm = BitmapFactory.decodeFile(filename);
                 if (bm != null) {
+                    take_picture.setText("Retake Picture");
+                    image_thumbnail.setVisibility(View.VISIBLE);
                     image_thumbnail.setImageBitmap(bm);
                 }
             }
@@ -193,22 +228,37 @@ public class survey extends Activity
     public boolean onCreateOptionsMenu (Menu m) {
         super.onCreateOptionsMenu (m);
 
-        m.add (Menu.NONE, 0, Menu.NONE, "Map").setIcon (android.R.drawable.ic_menu_mapmode);
+        m.add (Menu.NONE, 0, Menu.NONE, "Home").setIcon (android.R.drawable.ic_menu_revert);
+        m.add (Menu.NONE, 1, Menu.NONE, "Map").setIcon (android.R.drawable.ic_menu_mapmode);
+        m.add (Menu.NONE, 2, Menu.NONE, "About").setIcon (android.R.drawable.ic_menu_info_details);
+        m.add (Menu.NONE, 3, Menu.NONE, "Instructions").setIcon (android.R.drawable.ic_menu_help);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected (MenuItem i) {
-        switch (i.getItemId()) {
+    public boolean onOptionsItemSelected (MenuItem index) {
+        Context ctx = survey.this;
+        Intent i;
+        switch (index.getItemId()) {
             case 0:
-                survey.this.startActivity (new Intent(survey.this, map.class));
-                survey.this.finish();
-                return true;
+                i = new Intent (ctx, home.class);
+                break;
+            case 1:
+                i = new Intent (ctx, map.class);
+                break;
+            case 2:
+                i = new Intent (ctx, about.class);
+                break;
+            case 3:
+                i = new Intent (ctx, instructions.class);
+                break;
             default:
                 return false;
         }
+        ctx.startActivity (i);
+        this.finish();
+        return true;
     }
-
 
     private void alert_no_gps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -285,93 +335,169 @@ public class survey extends Activity
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    OnClickListener check_box_listener = new OnClickListener() {
-        public void onClick(View v) {
-            List<CheckBox> lcb;
-            CheckBox cb = (CheckBox) v;
-            boolean checked = cb.isChecked();
+    public void update_checkbox_status (CheckBox cb) {
+        List<CheckBox> lcb;
+        boolean checked = cb.isChecked();
 
-            for (int i = 0; i < group_box_list.size(); i++) {
-                lcb = group_box_list.get(i);
-                int index = lcb.indexOf(cb);
-                
-                if(-1 != index) {
-                    for (i = 0; i < lcb.size(); i++) {
-                        cb = (CheckBox) lcb.get(i);
-                        if (i != index &&
-                            cb.isChecked()) {
-                            cb.setChecked(false);
+        if (R.id.question_5_option_2 == cb.getId()) {
+            TableRow tr = (TableRow) findViewById(R.id.question_6_row);
+            tr.setVisibility(checked ? View.GONE : View.VISIBLE);
+            return;
+        }
+
+        if (R.id.operable_broken == cb.getId()) {
+            View v = findViewById(R.id.taste_row);
+            v.setVisibility(checked ? View.GONE : View.VISIBLE);
+
+            v = (TableRow) findViewById(R.id.flow_row);
+            v.setVisibility(checked ? View.GONE : View.VISIBLE);
+
+            CheckBox ncb = (CheckBox) findViewById(R.id.question_5_option_2);
+            ncb.setVisibility(checked ? View.GONE : View.VISIBLE);
+
+            if (false == ncb.isChecked()) {
+                v = findViewById(R.id.question_6_row);
+                v.setVisibility(checked ? View.GONE : View.VISIBLE);
+            }
+        }
+
+        // dont do anything if this box was unchecked
+        if (false == checked) {
+            return;
+        }
+
+        for (int i = 0; i < group_box_list.size(); i++) {
+            lcb = group_box_list.get(i);
+            int index = lcb.indexOf(cb);
+
+            // continue on if the check box wasn't found in this checkbox group
+            if(-1 == index) {
+                continue;
+            }
+
+            // switch all of the other checkboxes in this group off
+            for (i = 0; i < lcb.size(); i++) {
+                cb = (CheckBox) lcb.get(i);
+                if (i != index
+                        && cb.isChecked())
+                {
+                    cb.setChecked(false);
+                    checked = false;
+                    if (R.id.operable_broken == cb.getId()) {
+                        View v = findViewById(R.id.taste_row);
+                        v.setVisibility(checked ? View.GONE : View.VISIBLE);
+
+                        v = findViewById(R.id.flow_row);
+                        v.setVisibility(checked ? View.GONE : View.VISIBLE);
+
+                        v = findViewById(R.id.question_5_row);
+                        v.setVisibility(checked ? View.GONE : View.VISIBLE);
+
+                        CheckBox ncb = (CheckBox) findViewById(R.id.question_5_option_2);
+                        ncb.setVisibility(checked ? View.GONE : View.VISIBLE);
+
+                        if (false == ncb.isChecked()) {
+                            v = findViewById(R.id.question_6_row);
+                            v.setVisibility(checked ? View.GONE : View.VISIBLE);
                         }
                     }
-                    return;
                 }
             }
+            return;
+        }
+    }
+
+    OnClickListener check_box_listener = new OnClickListener() {
+        public void onClick(View v) {
+            update_checkbox_status ((CheckBox) v);
         }
     };
 
     OnClickListener submit_button_listener = new OnClickListener() {
+        private String get_group_result (int index) {
+            List<CheckBox> lcb = group_box_list.get(index);
+            for (int i = 0; i < lcb.size(); i++) {
+                CheckBox cb = (CheckBox) lcb.get(i);
+                if (cb.isChecked()) {
+                    return Integer.toString(i+1);
+                }
+            }
+            return "0";
+        }
+
         public void onClick(View v) {
             Date d = new Date();
 
-            String q_taste = "0";
+            String q_location = "0";
             String q_visibility = "0";
             String q_operable = "0";
+            String q_wheel = "0";
+            String q_child = "0";
+            String q_refill = "0";
+            String q_refill_aux = "0";
+            String q_taste = "0";
             String q_flow = "0";
-            String q_style = "0";
-            String q_location = "0";
 
-            List<CheckBox> lcb = group_box_list.get(0);
-            for (int i = 0; i < lcb.size(); i++) {
-                CheckBox cb = (CheckBox) lcb.get(i);
-                if (cb.isChecked()) {
-                    q_taste = Integer.toString(i);
-                    break;
-                }
+            q_location = get_group_result (GB_INDEX_LOC);
+            q_visibility = get_group_result (GB_INDEX_VIS);
+            q_operable = get_group_result (GB_INDEX_OPER);
+            q_wheel = get_group_result (GB_INDEX_WHEEL);
+            q_child = get_group_result (GB_INDEX_CHILD);
+            q_refill = get_group_result (GB_INDEX_REFILL);
+            q_refill_aux = get_group_result (GB_INDEX_REFILL_AUX);
+            q_taste = get_group_result (GB_INDEX_TASTE);
+            q_flow = get_group_result (GB_INDEX_FLOW);
+
+            /* make sure they dont submit an incomplete survey */
+            if (q_location.equals("0")
+                || q_visibility.equals("0")
+                || q_operable.equals("0"))
+            {
+                Toast
+                .makeText (survey.this,
+                           "You have not answered one or more questions. Please fill them all out.",
+                           Toast.LENGTH_LONG)
+                .show();
+                return;
             }
 
-            lcb = group_box_list.get(1);
-            for (int i = 0; i < lcb.size(); i++) {
-                CheckBox cb = (CheckBox) lcb.get(i);
-                if (cb.isChecked()) {
-                    q_visibility = Integer.toString(i);
-                    break;
-                }
+            if (!q_operable.equals("2")
+                && !q_refill.equals("1")
+                && q_refill_aux.equals("0"))
+            {
+                Toast
+                .makeText (survey.this,
+                           "You have not marked why you couldn't refill from this fountain.",
+                           Toast.LENGTH_LONG)
+                .show();
+                return;
             }
 
-            lcb = group_box_list.get(2);
-            for (int i = 0; i < lcb.size(); i++) {
-                CheckBox cb = (CheckBox) lcb.get(i);
-                if (cb.isChecked()) {
-                    q_operable = Integer.toString(i);              
-                    break;
-                }
+            if (!q_operable.equals("2")
+                && (q_taste.equals("0")
+                    || q_flow.equals("0")))
+            {
+                Toast
+                .makeText (survey.this,
+                           "You must fill out both the taste and flow questions.",
+                           Toast.LENGTH_LONG)
+                .show();
+                return;
             }
 
-            lcb = group_box_list.get(3);
-            for (int i = 0; i < lcb.size(); i++) {
-                CheckBox cb = (CheckBox) lcb.get(i);
-                if (cb.isChecked()) {
-                    q_flow = Integer.toString(i);              
-                    break;
-                }
+            /* if the fountain was broken then throw out anything that couldn't
+             * have been answered */
+            if (q_operable.equals("2")) {
+                q_refill =
+                q_refill_aux =
+                q_taste = 
+                q_flow = "0";
             }
 
-            lcb = group_box_list.get(4);
-            for (int i = 0; i < lcb.size(); i++) {
-                CheckBox cb = (CheckBox) lcb.get(i);
-                if (cb.isChecked()) {
-                    q_style = Integer.toString(i);              
-                    break;
-                }
-            }
-
-            lcb = group_box_list.get(5);
-            for (int i = 0; i < lcb.size(); i++) {
-                CheckBox cb = (CheckBox) lcb.get(i);
-                if (cb.isChecked()) {
-                    q_location = Integer.toString(i);
-                    break;
-                }
+            /* if they could refill a bottle at the fountain then throw out
+             * refill aux questions */
+            if (q_refill.equals("1")) {
+                q_refill_aux = "0";
             }
 
             String longitude = "";
@@ -380,9 +506,10 @@ public class survey extends Activity
             String photo_filename = filename;
 
             sdb.open();
-            long row_id = sdb.createEntry(q_taste, q_visibility, q_operable,
-                                          q_flow, q_style, q_location, longitude, latitude,
-                                          time, getString(R.string.version), photo_filename);
+            long row_id = sdb.createEntry(q_location, q_visibility, q_operable,
+                q_wheel, q_child, q_refill, q_refill_aux, q_taste, q_flow,
+                longitude, latitude, time, getString(R.string.version),
+                photo_filename);
             sdb.close();
 
             sdb.open();
@@ -394,7 +521,6 @@ public class survey extends Activity
                                    sr.q_visibility + ", " +
                                    sr.q_operable + ", " +
                                    sr.q_flow + ", " +
-                                   sr.q_style + ", " +
                                    sr.q_location + ", " +
                                    sr.longitude + ", " +
                                    sr.latitude + ", " +
@@ -402,9 +528,9 @@ public class survey extends Activity
                                    sr.version + ", " +
                                    sr.photo_filename + ".");
 
-            // restart this view
+            // popup success toast and return to home page
             Toast.makeText(survey.this, "Survey successfully submitted!", Toast.LENGTH_LONG).show();
-            survey.this.startActivity (new Intent(survey.this, survey.class));
+            survey.this.startActivity (new Intent(survey.this, home.class));
             survey.this.finish();
         }
     };
@@ -425,7 +551,7 @@ public class survey extends Activity
             for (int i = 0; i < sr_list.size(); i++) {
                 survey_db_row sr = sr_list.get(i);
                 File file = null;
-                if ((sr.photo_filename != null) && (sr.photo_filename.toString() != "")) {
+                if ((sr.photo_filename != null) && (!sr.photo_filename.toString().equals(""))) {
                     file = new File(sr.photo_filename.toString());
                 }
                 if(file != null) {
@@ -447,9 +573,11 @@ public class survey extends Activity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (RESULT_CANCELED != resultCode) {
             filename = data.getAction().toString();
-            if ((null != filename) && (filename.toString() != "")) {
+            if ((null != filename) && (!filename.toString().equals(""))) {
                 Bitmap bm = BitmapFactory.decodeFile(filename);
                 if (bm != null) {
+                    take_picture.setText("Retake Picture");
+                    image_thumbnail.setVisibility(View.VISIBLE);
                     image_thumbnail.setImageBitmap(bm);
                 }
             }
