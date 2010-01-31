@@ -11,10 +11,6 @@ import android.content.Intent;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 
-import android.location.LocationManager;
-import android.location.Location;
-import android.location.Criteria;
-
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Menu;
@@ -38,7 +34,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 
-import edu.ucla.cens.wetap.light_loc;
 import edu.ucla.cens.wetap.survey_db;
 import edu.ucla.cens.wetap.survey_db.survey_db_row;
 
@@ -52,7 +47,6 @@ public class survey extends Activity
     //private Button clear_history;
     private ImageView image_thumbnail;
     private String filename = "";
-    private light_loc ll;
     private survey_db sdb;
     private SharedPreferences preferences;
     private final int GB_INDEX_OPER = 0;
@@ -82,13 +76,7 @@ public class survey extends Activity
         //    return;
         //}
 
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                        Log.d(TAG, "no gps was enabled, so enabling the gps now");
-            alert_no_gps();
-        }
-
-        ll = new light_loc (this, lm);
+        preferences.edit ().putBoolean ("light_loc", false).commit ();
         sdb = new survey_db(this);
 
         Log.d(TAG, "gps listener and db are started");
@@ -276,42 +264,6 @@ public class survey extends Activity
                 });
         final AlertDialog alert = builder.create();
         alert.show();
-    }
-
-    protected void onPause() {
-        if (null != ll) {
-            ll.my_delete();
-            ll = null;
-        }
-        super.onPause();
-    }
-    protected void onResume() {
-        super.onResume();
-        if (null == ll) {
-            ll = new light_loc(this, (LocationManager) getSystemService(Context.LOCATION_SERVICE));
-        }
-    }
-
-    protected void onStop() {
-        if (null != ll) {
-            ll.my_delete();
-            ll = null;
-        }
-        super.onStop();
-    }
-    protected void onStart() {
-        super.onStart();
-        if (null == ll) {
-            ll = new light_loc(this, (LocationManager) getSystemService(Context.LOCATION_SERVICE));
-        }
-    }
-
-    protected void onDestroy() {
-        if (null != ll) {
-            ll.my_delete();
-            ll = null;
-        }
-        super.onDestroy();
     }
 
     // if this activity gets killed for any reason, save the status of the
@@ -527,6 +479,12 @@ public class survey extends Activity
                                    sr.time + ", " +
                                    sr.version + ", " +
                                    sr.photo_filename + ".");
+
+            /* start location service */
+            if (!preferences.getBoolean("light_loc", false)) {
+                startService (new Intent(survey.this, light_loc.class));
+                preferences.edit().putBoolean ("light_loc", true).commit ();
+            }
 
             // popup success toast and return to home page
             Toast.makeText(survey.this, "Survey successfully submitted!", Toast.LENGTH_LONG).show();
