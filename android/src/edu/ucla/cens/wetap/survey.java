@@ -79,7 +79,7 @@ public class survey extends Activity
         sdb = new survey_db(this);
 
         /* start location service */
-        startService (new Intent(ctx, light_loc.class));
+        startService (new Intent(survey.this, light_loc.class));
         preferences.edit().putBoolean ("light_loc", true).commit ();
 
         Log.d(TAG, "gps listener and db are started");
