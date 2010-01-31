@@ -24,6 +24,7 @@ public class light_loc extends Service {
     private SharedPreferences pref;
     private Context ctx;
     private static final String TAG = "LIGHT_LOC LOCATION SERVICE";
+    private int counter = 5;
 
     @Override
     public void onCreate () {
@@ -66,6 +67,11 @@ public class light_loc extends Service {
                 String lat = Double.toString (loc.getLatitude ());
                 String lon = Double.toString (loc.getLongitude ());
                 int ret;
+
+                /* let the location manager get a 5 updates before using one */
+                if (0 != counter  && counter --> 0) {
+                    return;
+                }
 
                 sdb.open();
                 ret = sdb.update_gpsless_entries (lon, lat);
