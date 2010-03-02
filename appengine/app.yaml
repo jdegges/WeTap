@@ -8,6 +8,8 @@ handlers:
     static_dir: static/download
 -   url: /images
     static_dir: static/images
+-   url: /js
+    static_dir: js
 -   url: /css
     static_dir: static/css
 -   url: /favicon.ico
