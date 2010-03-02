@@ -7,84 +7,151 @@
 {% endblock %}
 
 {% block javascript %}
-
     // Load Google Maps API
     google.load("maps", "2");
 
-    function initialize() {
-        if (GBrowserIsCompatible()) {
-            var mapOptions = {
-                googleBarOptions : {
-                    style : "new"
+    // ---- Data Definition ----
+    // base URL
+    var BASE_URL = "http://we-tap.appspot.com";
+
+    // AJAX http object
+    var ajax = null;
+
+    // google maps object
+    var map = null;
+
+    // markers currently displayed. Keep track of markers so that their action listeners will work
+    // also keep track of them so they can be removed later
+    allFountainMarkers = [];
+
+
+    // ---- Functions ----
+    // ---- call to get point data from server in JSON format. Result Handled by handleGetPointReq
+    function getPointData() {
+        //// Calling again just in case  if it may be needed
+        if(ajax == null) {		
+            ajax = getXMLHttpRequestObject();    
+        }
+
+        if (ajax != null) 
+        {
+            ajax.open("GET", BASE_URL + "/get_point_data", true); 
+            ajax.onreadystatechange = handleGetPointReq;    
+            ajax.send(null);		
+        }
+        else
+        {
+            alert("ajax in null");
+        }
+	}	
+
+    // ---- handle request to get points
+    function handleGetPointReq() {
+        if(ajax.readyState == 4) {
+            if((ajax.status == 200) || (ajax.status == 304)) {
+                // parse JSON data and make marker for each
+                var data = eval('(' + ajax.responseText + ')');
+                var data = JSON.parse(ajax.responseText);
+                
+                if(data.length > 0) {
+                    for(var i = 0; data.length > i; i++) {
+                        var html = "<img src=\"http://we-tap.appspot.com/get_an_image?key=" + data[i].key + "\" width=\"180\" height=\"130\">" +
+                                   "<br />" +
+                                   "<p><b>Taste: </b>" + data[i].taste + "<br/>" +
+                                   "<b>Visibility: </b>" + data[i].visibility + "<br/>" +
+                                   "<b>Operable: </b>" + data[i].operable + "<br/>" +
+                                   "<b>Flow: </b>" + data[i].flow + "<br/>" +
+                                   "<b>Wheelchair accessible: </b>" + data[i].wheel + "<br/>" +
+                                   "<b>Child accessible: </b>" + data[i].child + "<br/>" +
+                                   "<b>Can refill water bottle: </b>" + data[i].refill + "<br/>" +
+                                   "<b>Unable to refill because: </b><br/>" + data[i].refill_aux + "<br/>" +
+                                   "<b>Location: </b>" + data[i].location +
+                                   "</p>";
+
+                        allFountainMarkers[i] = makeMarkerWithMsg(new GLatLng(data[i].latitude, data[i].longitude), html);
+                        map.addOverlay(allFountainMarkers[i]);
+                    }
                 }
             }
-
-            var map = new GMap2(document.getElementById("map_canvas"), mapOptions);
-            //// Center Map
-            // Default to UCLA location
-            var initialLat =  34.069209;
-            var initialLng = -118.443161; 
-            var initialZoom = 14;
-		
-            // If the user is using a browser that supports the new Geolocation API by WC3, get lat and lng that way
-            if(navigator.geolocation) {
-                // handles successful attempt to get accurate user location information
-                function setUserLatLng(position) {
-                    // set centered at (position.coords.latitude, position.coords.longitude)
-                    initialLat = position.coords.latitude;
-                    initialLng = position.coords.longitude;
-                    initialZoom = 16;
-                }
-
-                // One-shot position request.
-                navigator.geolocation.getCurrentPosition(setUserLatLng);
-            }		
             else {
-                // otherwise use google's API
-                if(google.loader.ClientLocation &&
-                google.loader.ClientLocation.address.country_code == "US" &&
-                google.loader.ClientLocation.address.region) {
-                    // If the client information is available, set center to the client locaiton
-                    initialLat = google.loader.ClientLocation.latitude;
-                    initialLng = google.loader.ClientLocation.longitude;
-                    initialZoom = 13;
-                }
-                else {
-                    // FOR DEBUGGING
-                    //alert("Client Information Not Available");
-                }
+                alert("Request to get point data failed.");
             }
-        
-            var startingCenter = new GLatLng(initialLat, initialLng);
-            map.setCenter(startingCenter, initialZoom);  
-
-            map.setUIToDefault();
-            map.enableGoogleBar();
- 
-            // Add markers to the map
-            {% for s in surveys %}
-                var marker = new GMarker(new GLatLng({{s.latitude}}, {{s.longitude}}));
-                GEvent.addListener(marker, "click", function() {
-                    var html = "<img src=\"http://we-tap.appspot.com/get_an_image?key={{s.key}}\" width=\"180\" height=\"130\">" +
-                               "<br />" +
-                               "<p><b>Taste: </b>{{s.q_taste}}<br/>" +
-                               "<b>Visibility: </b>{{s.q_visibility}}<br/>" +
-                               "<b>Operable: </b>{{s.q_operable}}<br/>" +
-                               "<b>Flow: </b>{{s.q_flow}}<br/>" +
-                               "<b>Wheelchair accessible: </b>{{s.q_wheel}}<br/>" +
-                               "<b>Child accessible: </b>{{s.q_child}}<br/>" +
-                               "<b>Can refill water bottle: </b>{{s.q_refill}}<br/>" +
-                               "<b>Unable to refill because: </b><br/>{{s.q_refill_aux}}<br/>" +
-                               "<b>Location: </b>{{s.q_location}}" +
-                               "</p>";
-                    map.openInfoWindowHtml(new GLatLng({{s.latitude}}, {{s.longitude}}), html);
-                });
-                map.addOverlay(marker);
-            {% endfor %}
         }
     }
+
+    // ---- make a marker
+    function makeMarkerWithMsg(markerLatLng, myHtml) {
+        var marker = new GMarker(markerLatLng);
+        GEvent.addListener(marker, "click", function() {
+                            marker.openInfoWindowHtml(myHtml);
+        });
+        return marker;
+    }
+
+    // ---- called on page load
+    function initialize() {
+        // initialize ajax object
+        ajax = getXMLHttpRequestObject();
+
+        if(ajax) {
+            if (GBrowserIsCompatible()) {
+                var mapOptions = {
+                    googleBarOptions : {
+                        style : "new"
+                    }
+                }
+
+                map = new GMap2(document.getElementById("map_canvas"), mapOptions);
+                //// Center Map
+                // Default to UCLA location
+                var initialLat =  34.069209;
+                var initialLng = -118.443161; 
+                var initialZoom = 14;
+		
+                // If the user is using a browser that supports the new Geolocation API by WC3, get lat and lng that way
+                if(navigator.geolocation) {
+                    // handles successful attempt to get accurate user location information
+                    function setUserLatLng(position) {
+                        // set centered at (position.coords.latitude, position.coords.longitude)
+                        initialLat = position.coords.latitude;
+                        initialLng = position.coords.longitude;
+                        initialZoom = 16;
+                    }
+
+                    // One-shot position request.
+                    navigator.geolocation.getCurrentPosition(setUserLatLng);
+                }		
+                else {
+                    // otherwise use google's API
+                    if(google.loader.ClientLocation &&
+                    google.loader.ClientLocation.address.country_code == "US" &&
+                    google.loader.ClientLocation.address.region) {
+                        // If the client information is available, set center to the client locaiton
+                        initialLat = google.loader.ClientLocation.latitude;
+                        initialLng = google.loader.ClientLocation.longitude;
+                        initialZoom = 13;
+                    }
+                    else {
+                        // FOR DEBUGGING
+                        //alert("Client Information Not Available");
+                    }
+                }
+            
+                var startingCenter = new GLatLng(initialLat, initialLng);
+                map.setCenter(startingCenter, initialZoom);  
+
+                map.setUIToDefault();
+                map.enableGoogleBar();
+     
+                // Try to get data for points
+                getPointData();
+                //sendAjaxRequest(ajax, "http://localhost:8080/get_point_data", handleGetPointReq);
+            }
+        }
+    }
+
 {% endblock %}
- 
+
 {% block content %}
     <div id="map_canvas" style="width: 980px; height: 600px" align="center"></div>
 {% endblock %}

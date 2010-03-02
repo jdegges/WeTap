@@ -160,6 +160,32 @@ class UploadSurvey(webapp.RequestHandler):
         s.put()
         self.redirect('/')
 
+#Only used to upload test data with location only information 
+class UploadSurveyMock(webapp.RequestHandler):
+    def post(self):
+        s = Survey()
+        print "In Function!\n"
+        if users.get_current_user():
+            s.user = users.get_current_user()
+        s.q_taste = '0'
+        s.q_visibility = '1'
+        s.q_operable = '1'
+        s.q_flow = '0'
+        s.q_wheel = '0'
+        s.q_child = '0'
+        s.q_refill = '0'
+        s.q_refill_aux = '0'
+        s.q_location = '1'
+        s.longitude = self.request.get('longitude')
+        s.latitude = self.request.get('latitude')
+        s.time = 'mytime'
+        s.version = 'myversion'
+        s.photo = ''
+        print "GOT PARAMS\n"
+        s.put()
+        self.redirect('/')
+        print "FINISHED\n"
+
 class GetPointSummary(webapp.RequestHandler):
     def get(self):
         surveys = db.GqlQuery("SELECT * FROM Survey ORDER BY timestamp DESC LIMIT 1000")
@@ -174,6 +200,37 @@ class GetPointSummary(webapp.RequestHandler):
             e['version'] = s.version
 
             d[i] = e;
+            i = i + 1
+
+        self.response.headers['Content-type'] = 'text/plain'
+        if i > 0:
+            self.response.out.write(json.dumps(d))
+        else:
+            self.response.out.write("no data so far")
+
+class GetPointData(webapp.RequestHandler):
+    def get(self):
+        surveys = db.GqlQuery("SELECT * FROM Survey ORDER BY timestamp DESC LIMIT 1000")
+        d = []
+        i = 0
+        for s in surveys:
+            e = {}
+            e['latitude'] = s.latitude
+            e['longitude'] = s.longitude
+            e['key'] = str(s.key())
+            e['taste'] = decode_survey("taste", s.q_taste)
+            e['visibility'] = decode_survey("visibility", s.q_visibility)
+            e['operable'] = decode_survey("operable", s.q_operable)
+            e['flow'] = decode_survey("flow", s.q_flow)
+            e['wheel'] = decode_survey("wheel", s.q_wheel)
+            e['child'] = decode_survey("child", s.q_child)
+            e['refill'] = decode_survey("refill", s.q_refill)
+            e['refill_aux'] = decode_survey("refill_aux", s.q_refill_aux)
+            e['location'] = decode_survey("location", s.q_location)
+            
+            # use list instead to make it easier to parse in JavaScript
+            d.append(e);
+            #d[i] = e;
             i = i + 1
 
         self.response.headers['Content-type'] = 'text/plain'
@@ -239,7 +296,9 @@ application = webapp.WSGIApplication(
                                       ('/clients', ClientsPage),
                                       ('/about', AboutPage),
                                       ('/upload_survey', UploadSurvey),
+                                      ('/upload_survey_mock', UploadSurveyMock),
                                       ('/get_point_summary', GetPointSummary),
+                                      ('/get_point_data', GetPointData),
                                       ('/get_a_point', GetAPoint),
                                       ('/get_an_image', GetAnImage),
                                       ('/get_image_thumb', GetImageThumb)],
