@@ -1,5 +1,6 @@
 import cgi
 import os
+import math
 from django.utils import simplejson as json
 
 from google.appengine.api import users
@@ -106,6 +107,9 @@ class Survey(db.Model):
     time =          db.StringProperty()
     version =       db.StringProperty()
     photo =         db.BlobProperty()
+    # added fields for query for distances
+    longitude_float = db.FloatProperty()
+    latitude_float = db.FloatProperty()
 
 class HomePage(webapp.RequestHandler):
     def get(self):
@@ -148,6 +152,9 @@ class UploadSurvey(webapp.RequestHandler):
         s.q_location = self.request.get('q_location')
         s.longitude = self.request.get('longitude')
         s.latitude = self.request.get('latitude')
+        # added code to upload lat and lng in floating point as well
+        s.longitude_float = float(s.longitude)
+        s.latitude_float = float(s.latitude)
         s.time = self.request.get('time')
         s.version = self.request.get('version')
 
@@ -181,10 +188,27 @@ class UploadSurveyMock(webapp.RequestHandler):
         s.time = 'mytime'
         s.version = 'myversion'
         s.photo = ''
+        # code to add lat and lng as floating point as well 
+        s.longitude_float = float(s.longitude)
+        s.latitude_float = float(s.latitude)
         print "GOT PARAMS\n"
         s.put()
         self.redirect('/')
         print "FINISHED\n"
+
+
+# add floating point lat and lng to current data (no fields originally)
+# check result with GetPointData in browser
+class UpdateFloatLatLng(webapp.RequestHandler):
+    def get(self):
+        surveys = db.GqlQuery("SELECT * FROM Survey ORDER BY timestamp DESC LIMIT 1000")
+        d = []
+        i = 0
+        for s in surveys:
+            s.longitude_float = float(s.longitude)
+            s.latitude_float = float(s.latitude)
+            s.put()
+
 
 class GetPointSummary(webapp.RequestHandler):
     def get(self):
@@ -210,7 +234,51 @@ class GetPointSummary(webapp.RequestHandler):
 
 class GetPointData(webapp.RequestHandler):
     def get(self):
-        surveys = db.GqlQuery("SELECT * FROM Survey ORDER BY timestamp DESC LIMIT 1000")
+        # get input from user. If longitude and latitude not provided, most recent 1000 entries returned
+        distInMiles = self.request.get('distInMiles')
+        if distInMiles == "":
+            distInMiles = 1
+        else:
+            distInMiles = float(distInMiles)
+
+        # relax distance for error in calculation
+        distInMiles = distInMiles * 1.1
+
+        mapLatStr = self.request.get('lat')
+        mapLngStr = self.request.get('lng')
+
+        # if lat or lng not available, use most recent 1000 entries. 
+        # this should not normally happen
+        if(mapLatStr == "" or mapLngStr == ""):
+            surveys = db.GqlQuery("SELECT * FROM Survey ORDER BY timestamp DESC LIMIT 1000")
+            hasLatLng = False
+        else: 
+            hasLatLng = True
+            mapLat = float(mapLatStr)
+            mapLng = float(mapLngStr)
+            # calculate lat and lng deltas based on distance
+            # Data from http://www.geesblog.com/2009/01/calculating-distance-between-latitude-longitude-pairs-in-python/
+            nauticalMilePerLat = 60.00721
+            nauticalMilePerLng = 60.10793
+            rad = math.pi / 180.0
+            milesPerNauticalMile = 1.15078
+
+            distInNautMile = distInMiles / milesPerNauticalMile
+            latDelta = distInNautMile / nauticalMilePerLat
+
+            if math.cos(mapLat*rad) == 0:
+                lngDelta = distInNautMile / nauticalMilePerLng
+            else:
+                lngDelta = distInMiles / (nauticalMilePerLng * milesPerNauticalMile * math.cos(mapLat*rad))
+
+            lowerLat = mapLat - latDelta
+            higherLat = mapLat + latDelta
+            lowerLng = mapLng - lngDelta
+            higherLng = mapLng + lngDelta
+
+            surveys = db.GqlQuery("SELECT * FROM Survey WHERE latitude_float >= :1 AND latitude_float <= :2", lowerLat, higherLat)
+
+        # use list instead to make it easier to parse in JavaScript
         d = []
         i = 0
         for s in surveys:
@@ -227,11 +295,16 @@ class GetPointData(webapp.RequestHandler):
             e['refill'] = decode_survey("refill", s.q_refill)
             e['refill_aux'] = decode_survey("refill_aux", s.q_refill_aux)
             e['location'] = decode_survey("location", s.q_location)
+            e['latFloat'] = s.latitude_float
+            e['lngFloat'] = s.longitude_float
             
-            # use list instead to make it easier to parse in JavaScript
-            d.append(e);
-            #d[i] = e;
-            i = i + 1
+            if hasLatLng == True:
+                if(s.longitude_float <= higherLng and s.longitude_float >= lowerLng):
+                    d.append(e)
+                    i = i + 1
+            else:
+                d.append(e)
+                i = i + 1
 
         self.response.headers['Content-type'] = 'text/plain'
         if i > 0:
@@ -301,7 +374,8 @@ application = webapp.WSGIApplication(
                                       ('/get_point_data', GetPointData),
                                       ('/get_a_point', GetAPoint),
                                       ('/get_an_image', GetAnImage),
-                                      ('/get_image_thumb', GetImageThumb)],
+                                      ('/get_image_thumb', GetImageThumb),
+                                      ('/update_float_lat_lng', UpdateFloatLatLng)],
                                      debug=True)
 
 def main():
