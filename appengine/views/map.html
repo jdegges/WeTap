@@ -15,6 +15,7 @@
     var BASE_URL = "http://we-tap.appspot.com";
 
     // AJAX http object
+
     var ajax = null;
 
     // google maps object
@@ -27,22 +28,38 @@
 
     // ---- Functions ----
     // ---- call to get point data from server in JSON format. Result Handled by handleGetPointReq
-    function getPointData() {
+    function getFountainData(lat, lng, distInMiles) {
+
         //// Calling again just in case  if it may be needed
+
         if(ajax == null) {		
             ajax = getXMLHttpRequestObject();    
         }
 
+
         if (ajax != null) 
+
         {
-            ajax.open("GET", BASE_URL + "/get_point_data", true); 
+            var reqURL = BASE_URL + "/get_point_data?distInMiles=" + distInMiles 
+                                                        + "&lat=" + lat
+                                                        + "&lng=" + lng;
+            //alert(reqURL);
+
+            ajax.open("GET", reqURL , true); 
+
             ajax.onreadystatechange = handleGetPointReq;    
             ajax.send(null);		
+
         }
+
         else
+
         {
+
             alert("ajax in null");
+
         }
+
 	}	
 
     // ---- handle request to get points
@@ -51,8 +68,8 @@
             if((ajax.status == 200) || (ajax.status == 304)) {
                 // parse JSON data and make marker for each
                 var data = eval('(' + ajax.responseText + ')');
-                var data = JSON.parse(ajax.responseText);
-                
+                var data = JSON.parse(ajax.responseText);           
+
                 if(data.length > 0) {
                     for(var i = 0; data.length > i; i++) {
                         var html = "<img src=\"http://we-tap.appspot.com/get_an_image?key=" + data[i].key + "\" width=\"180\" height=\"130\">" +
@@ -79,6 +96,13 @@
         }
     }
 
+    // display water fountains within dist of current map's center
+    function getWaterForCurrentMap(dist) {
+        clearFountainMarkers();     
+        myCenter = map.getCenter(); 
+        getFountainData(myCenter.lat(), myCenter.lng(), dist);
+    }
+
     // ---- make a marker
     function makeMarkerWithMsg(markerLatLng, myHtml) {
         var marker = new GMarker(markerLatLng);
@@ -87,6 +111,19 @@
         });
         return marker;
     }
+
+    // clear current markers on map
+    function clearFountainMarkers() {
+
+		for(var index = 0; allFountainMarkers.length > index; index++) {
+
+			map.removeOverlay(allFountainMarkers[index]);
+
+		}
+
+		allFountainMarkers = [];
+
+	}
 
     // ---- called on page load
     function initialize() {
@@ -144,8 +181,7 @@
                 map.enableGoogleBar();
      
                 // Try to get data for points
-                getPointData();
-                //sendAjaxRequest(ajax, "http://localhost:8080/get_point_data", handleGetPointReq);
+                getWaterForCurrentMap(2);
             }
         }
     }
@@ -154,4 +190,5 @@
 
 {% block content %}
     <div id="map_canvas" style="width: 980px; height: 600px" align="center"></div>
+    <input type="button" value="Get Water Fountains for Current Location" onClick="getWaterForCurrentMap(2);"/>
 {% endblock %}
