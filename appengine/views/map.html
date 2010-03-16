@@ -15,53 +15,50 @@
     var BASE_URL = "http://we-tap.appspot.com";
 
     // AJAX http object
-
     var ajax = null;
 
     // google maps object
-    var map = null;
+    var map = null;             
+            
+    // Keep track of markers currently on map
+    var allFountainMarkers = [];
 
-    // markers currently displayed. Keep track of markers so that their action listeners will work
-    // also keep track of them so they can be removed later
-    allFountainMarkers = [];
+    // index of selected marker            
+    var selectedFountainIndex = 0;     
+
+    // stores icons used
+    var markerIcons = [];
+	var FOUNTAIN_ICON = "fountain";
+    markerIcons[FOUNTAIN_ICON] = new GIcon(G_DEFAULT_ICON);
+    markerIcons[FOUNTAIN_ICON].image = "icons/mm_20_blue.png";
+    markerIcons[FOUNTAIN_ICON].iconSize = new GSize(12, 20);  
 
 
     // ---- Functions ----
+//-----------------------------------------------------------------------------
     // ---- call to get point data from server in JSON format. Result Handled by handleGetPointReq
     function getFountainData(lat, lng, distInMiles) {
-
         //// Calling again just in case  if it may be needed
-
         if(ajax == null) {		
             ajax = getXMLHttpRequestObject();    
         }
 
-
         if (ajax != null) 
-
         {
             var reqURL = BASE_URL + "/get_point_data?distInMiles=" + distInMiles 
                                                         + "&lat=" + lat
                                                         + "&lng=" + lng;
             //alert(reqURL);
-
             ajax.open("GET", reqURL , true); 
-
             ajax.onreadystatechange = handleGetPointReq;    
             ajax.send(null);		
-
         }
-
         else
-
         {
-
             alert("ajax in null");
-
         }
-
 	}	
-
+//-----------------------------------------------------------------------------
     // ---- handle request to get points
     function handleGetPointReq() {
         if(ajax.readyState == 4) {
@@ -69,8 +66,10 @@
                 // parse JSON data and make marker for each
                 var data = eval('(' + ajax.responseText + ')');
                 var data = JSON.parse(ajax.responseText);           
+                var sidebarHtml = "";
 
                 if(data.length > 0) {
+                    sidebarHtml = '<table id="fountain_list" style="overflow: auto; display: block; overflow-x: no; overflow-y: scroll; height: 600px; width:200px;">';
                     for(var i = 0; data.length > i; i++) {
                         var html = "<img src=\"http://we-tap.appspot.com/get_an_image?key=" + data[i].key + "\" width=\"180\" height=\"130\">" +
                                    "<br />" +
@@ -85,9 +84,25 @@
                                    "<b>Location: </b>" + data[i].location +
                                    "</p>";
 
-                        allFountainMarkers[i] = makeMarkerWithMsg(new GLatLng(data[i].latitude, data[i].longitude), html);
+                        allFountainMarkers[i] = makeMarkerWithMsg(new GLatLng(data[i].latitude, data[i].longitude), html, FOUNTAIN_ICON);
                         map.addOverlay(allFountainMarkers[i]);
+    
+                        // for sidebar information. Add one row for each data point
+                        var rowColor = "#C0CBE7";      // light blue             
+                        if(i % 2 == 0) {
+                            rowColor = "white";
+                        }
+                        sidebarHtml = sidebarHtml + '<tr style="background-color:' + rowColor + ';"><td>' +
+                                                '<center><a onclick="focusOnFountain(' + i + ')">' +
+					                            '<div id="fountain' + i + '" style="cursor:pointer;">' +
+					                            '<font size=5 color=#2D73B9><u>' + (i + 1) + '</u></font><br/></div></a></center>' + 
+                                            '</td>' +
+                                            '<td>Lat:' + data[i].latitude + '\nLng: ' + data[i].longitude + '</td></tr>'; 
                     }
+                    
+                    sidebarHtml = sidebarHtml + '</table>';
+                    var fountainListLoc = document.getElementById("fountain_list");
+			        fountainListLoc.innerHTML = sidebarHtml;
                 }
             }
             else {
@@ -95,37 +110,44 @@
             }
         }
     }
-
-    // display water fountains within dist of current map's center
-    function getWaterForCurrentMap(dist) {
+//-----------------------------------------------------------------------------
+    // ---- display water fountains within dist of current map's center
+    function getFountainForCurrentMap(dist) {
         clearFountainMarkers();     
         myCenter = map.getCenter(); 
         getFountainData(myCenter.lat(), myCenter.lng(), dist);
     }
-
+//-----------------------------------------------------------------------------
     // ---- make a marker
-    function makeMarkerWithMsg(markerLatLng, myHtml) {
-        var marker = new GMarker(markerLatLng);
-        GEvent.addListener(marker, "click", function() {
-                            marker.openInfoWindowHtml(myHtml);
-        });
+    function makeMarkerWithMsg(markerLatLng, myHtml, typeOfIcon) {
+        var marker = new GMarker(markerLatLng, markerIcons[typeOfIcon]);
+        marker.bindInfoWindowHtml(myHtml);
         return marker;
     }
-
-    // clear current markers on map
+//-----------------------------------------------------------------------------
+    // ---- clear current markers on map
     function clearFountainMarkers() {
-
 		for(var index = 0; allFountainMarkers.length > index; index++) {
-
 			map.removeOverlay(allFountainMarkers[index]);
-
 		}
-
 		allFountainMarkers = [];
-
+        var fountainListLoc = document.getElementById("fountain_list");
+	    fountainListLoc.innerHTML = '<div id="fountain_list"></div>';
 	}
+//-----------------------------------------------------------------------------
+    // ---- focus map to fountain with given index
+    function focusOnFountain(fountainIndex) {
+		var point = allFountainMarkers[fountainIndex].getLatLng();
+		//map.setZoom(11);
+		map.panTo(point);
 
-    // ---- called on page load
+		// label on map with red after clicked
+		allFountainMarkers[selectedFountainIndex].setImage('icons/mm_20_blue.png');
+		allFountainMarkers[fountainIndex].setImage('icons/mm_20_red.png');
+		selectedFountainIndex = fountainIndex;
+	}
+//-----------------------------------------------------------------------------
+    // ---- called on page load, to initialize map
     function initialize() {
         // initialize ajax object
         ajax = getXMLHttpRequestObject();
@@ -152,7 +174,7 @@
                         // set centered at (position.coords.latitude, position.coords.longitude)
                         initialLat = position.coords.latitude;
                         initialLng = position.coords.longitude;
-                        initialZoom = 16;
+                        initialZoom = 14;
                     }
 
                     // One-shot position request.
@@ -181,14 +203,23 @@
                 map.enableGoogleBar();
      
                 // Try to get data for points
-                getWaterForCurrentMap(2);
+                getFountainForCurrentMap(5);
             }
         }
     }
-
+//-----------------------------------------------------------------------------
 {% endblock %}
 
 {% block content %}
-    <div id="map_canvas" style="width: 980px; height: 600px" align="center"></div>
-    <input type="button" value="Get Water Fountains for Current Location" onClick="getWaterForCurrentMap(2);"/>
+    <table border=0 rules="cols">	
+		<tr>			
+			<td width=200 valign="top">
+				<div id="fountain_list"></div>
+			</td>		
+			<td width=750 valign="top">
+				<div id="map_canvas" style="width: 750px; height: 600px" align="center"></div>
+			</td>	
+		</tr>	
+	</table>
+    <input type="button" value="Get Water Fountains for Current Location" onClick="getFountainForCurrentMap(5);"/>
 {% endblock %}
