@@ -166,6 +166,7 @@
                 var initialLat =  34.069209;
                 var initialLng = -118.443161; 
                 var initialZoom = 14;
+                var geoLocSuccess = false;
 		
                 // If the user is using a browser that supports the new Geolocation API by WC3, get lat and lng that way
                 if(navigator.geolocation) {
@@ -174,13 +175,13 @@
                         // set centered at (position.coords.latitude, position.coords.longitude)
                         initialLat = position.coords.latitude;
                         initialLng = position.coords.longitude;
-                        initialZoom = 14;
+                        geoLocSuccess = true;       
                     }
 
                     // One-shot position request.
                     navigator.geolocation.getCurrentPosition(setUserLatLng);
                 }		
-                else {
+                if(geoLocSuccess == false) {
                     // otherwise use google's API
                     if(google.loader.ClientLocation &&
                     google.loader.ClientLocation.address.country_code == "US" &&
