@@ -118,11 +118,12 @@ class HomePage(webapp.RequestHandler):
 
 class MapPage(webapp.RequestHandler):
     def get(self):
-        surveys = Survey.all().fetch(1000)
-        decoded = decode_surveys (surveys)
-        template_values = { 'surveys' : decoded }
+        # surveys = Survey.all().fetch(1000)
+        # decoded = decode_surveys (surveys)
+        # template_values = { 'surveys' : decoded }
         path = os.path.join (os.path.dirname(__file__), 'views/map.html')
-        self.response.out.write (template.render(path, template_values))
+        #self.response.out.write (template.render(path, template_values))
+        self.response.out.write (template.render(path, {}));
 
 class ClientsPage(webapp.RequestHandler):
     def get(self):
